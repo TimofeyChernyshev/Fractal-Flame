@@ -1,6 +1,6 @@
 COVERAGE_FILE ?= coverage.out
 
-TARGET ?= fractalflame # CHANGE THIS TO YOUR BINARY NAME
+TARGET ?= fractalflame
 
 .PHONY: build
 build:
@@ -11,5 +11,5 @@ build:
 ## test: run all tests
 .PHONY: test
 test:
-	@go test -coverpkg='github.com/es-debug/backend-academy-2024-go-template/...' --race -count=1 -coverprofile='$(COVERAGE_FILE)' ./...
+	@go test -coverpkg='gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/...' --race -count=1 -coverprofile='$(COVERAGE_FILE)' ./...
 	@go tool cover -func='$(COVERAGE_FILE)' | grep ^total | tr -s '\t'
