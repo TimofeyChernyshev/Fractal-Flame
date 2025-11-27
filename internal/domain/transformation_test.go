@@ -83,7 +83,8 @@ func TestSwirl(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := swirl(tt.input)
-			require.Equal(t, tt.expected, result)
+			require.InDelta(t, tt.expected.X, result.X, 1e-9)
+			require.InDelta(t, tt.expected.Y, result.Y, 1e-9)
 		})
 	}
 }
@@ -114,14 +115,15 @@ func TestHorseshoe(t *testing.T) {
 		{
 			name:     "point (1, 1)",
 			input:    NewPoint(1, 1),
-			expected: NewPoint(0, 2/math.Sqrt(2)),
+			expected: NewPoint(0, 2/math.Sqrt2),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := horseshoe(tt.input)
-			require.Equal(t, tt.expected, result)
+			require.InDelta(t, tt.expected.X, result.X, 1e-9)
+			require.InDelta(t, tt.expected.Y, result.Y, 1e-9)
 		})
 	}
 }
@@ -159,7 +161,8 @@ func TestSpherical(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := spherical(tt.input)
-			require.Equal(t, tt.expected, result)
+			require.InDelta(t, tt.expected.X, result.X, 1e-9)
+			require.InDelta(t, tt.expected.Y, result.Y, 1e-9)
 		})
 	}
 }
@@ -190,14 +193,15 @@ func TestSinusoidal(t *testing.T) {
 		{
 			name:     "point (pi, pi)",
 			input:    NewPoint(math.Pi, math.Pi),
-			expected: NewPoint(math.Sin(math.Pi), math.Sin(math.Pi)),
+			expected: NewPoint(0, 0),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := sinusoidal(tt.input)
-			require.Equal(t, tt.expected, result)
+			require.InDelta(t, tt.expected.X, result.X, 1e-9)
+			require.InDelta(t, tt.expected.Y, result.Y, 1e-9)
 		})
 	}
 }
@@ -218,7 +222,7 @@ func TestHeart(t *testing.T) {
 		{
 			name:     "point (1, 0)",
 			input:    NewPoint(1, 0),
-			expected: NewPoint(1, -math.Cos(math.Pi/2)),
+			expected: NewPoint(1, 0),
 		},
 		{
 			name:     "point (0, 1)",
@@ -230,7 +234,8 @@ func TestHeart(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := heart(tt.input)
-			require.Equal(t, tt.expected, result)
+			require.InDelta(t, tt.expected.X, result.X, 1e-9)
+			require.InDelta(t, tt.expected.Y, result.Y, 1e-9)
 		})
 	}
 }
