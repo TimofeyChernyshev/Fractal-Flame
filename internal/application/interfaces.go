@@ -1,6 +1,8 @@
 package application
 
-import "gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
+import (
+	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
+)
 
 type Renderer interface {
 	Render(args *domain.Args) *domain.FractalImage
@@ -11,5 +13,5 @@ type Saver interface {
 }
 
 type Chooser interface {
-	Choose(threads int) Renderer
+	Choose(threads int, random int64) Renderer
 }

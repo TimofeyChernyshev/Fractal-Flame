@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"math"
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
@@ -20,6 +21,8 @@ type serviceSuite struct {
 	ctrl      *gomock.Controller
 	service   *FlameService
 	logBuffer io.Writer
+	args      *domain.Args
+	image     *domain.FractalImage
 }
 
 func TestRunAppSuite(t *testing.T) {
@@ -36,6 +39,23 @@ func (s *serviceSuite) SetupSuite() {
 	logger := slog.New(slog.NewTextHandler(s.logBuffer, &slog.HandlerOptions{Level: slog.LevelError}))
 
 	s.service = NewFlameService(s.saver, s.chooser, logger)
+
+	s.args = &domain.Args{
+		Size:           domain.Size{Height: 999, Width: 999},
+		IterationCount: 999,
+		OutputPath:     "cfg.png",
+		Threads:        1,
+		Seed:           9.99,
+		Functions: []domain.Function{
+			{Name: domain.Swirl, Weight: 0.5},
+			{Name: domain.Horseshoe, Weight: 0.2},
+		},
+		AffineParams: domain.AffineParam{
+			A: 2, B: 2, C: 2, D: 2, E: 2, F: 2,
+		},
+	}
+
+	s.image = domain.NewFractalImage(999, 999)
 }
 
 func (s *serviceSuite) TearDownSuite() {
@@ -43,55 +63,27 @@ func (s *serviceSuite) TearDownSuite() {
 }
 
 func (s *serviceSuite) TestParseArgs() {
-	args := &domain.Args{
-		Size:           domain.Size{Height: 999, Width: 999},
-		IterationCount: 999,
-		OutputPath:     "cfg.png",
-		Threads:        1,
-		Seed:           9.99,
-		Functions: []domain.Function{
-			{Name: domain.Swirl, Weight: 0.5},
-			{Name: domain.Horseshoe, Weight: 0.2},
-		},
-		AffineParams: domain.AffineParam{
-			A: 2, B: 2, C: 2, D: 2, E: 2, F: 2,
-		},
-	}
-	image := domain.NewFractalImage(999, 999)
+	seed := int64(math.Float64bits(s.args.Seed))
 
 	s.Run("No errors", func() {
-		s.chooser.EXPECT().Choose(args.Threads).Return(s.renderer)
-		s.renderer.EXPECT().Render(args).Return(image)
-		s.saver.EXPECT().Save(image, "cfg.png").Return(nil)
+		s.chooser.EXPECT().Choose(s.args.Threads, seed).Return(s.renderer)
+		s.renderer.EXPECT().Render(s.args).Return(s.image)
+		s.saver.EXPECT().Save(s.image, "cfg.png").Return(nil)
 
-		err := s.service.RenderFlame(args)
+		err := s.service.RenderFlame(s.args)
 		s.Require().NoError(err)
 	})
 }
 
 func (s *serviceSuite) TestSaverReturnErr() {
-	args := &domain.Args{
-		Size:           domain.Size{Height: 999, Width: 999},
-		IterationCount: 999,
-		OutputPath:     "cfg.png",
-		Threads:        1,
-		Seed:           9.99,
-		Functions: []domain.Function{
-			{Name: domain.Swirl, Weight: 0.5},
-			{Name: domain.Horseshoe, Weight: 0.2},
-		},
-		AffineParams: domain.AffineParam{
-			A: 2, B: 2, C: 2, D: 2, E: 2, F: 2,
-		},
-	}
-	image := domain.NewFractalImage(999, 999)
+	seed := int64(math.Float64bits(s.args.Seed))
 
 	s.Run("saver return error", func() {
-		s.chooser.EXPECT().Choose(args.Threads).Return(s.renderer)
-		s.renderer.EXPECT().Render(args).Return(image)
-		s.saver.EXPECT().Save(image, "cfg.png").Return(fmt.Errorf("some error"))
+		s.chooser.EXPECT().Choose(s.args.Threads, seed).Return(s.renderer)
+		s.renderer.EXPECT().Render(s.args).Return(s.image)
+		s.saver.EXPECT().Save(s.image, "cfg.png").Return(fmt.Errorf("some error"))
 
-		err := s.service.RenderFlame(args)
+		err := s.service.RenderFlame(s.args)
 		s.Require().Error(err)
 	})
 }

@@ -109,15 +109,15 @@ func (m *MockChooser) EXPECT() *MockChooserMockRecorder {
 }
 
 // Choose mocks base method.
-func (m *MockChooser) Choose(threads int) Renderer {
+func (m *MockChooser) Choose(threads int, random int64) Renderer {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Choose", threads)
+	ret := m.ctrl.Call(m, "Choose", threads, random)
 	ret0, _ := ret[0].(Renderer)
 	return ret0
 }
 
 // Choose indicates an expected call of Choose.
-func (mr *MockChooserMockRecorder) Choose(threads interface{}) *gomock.Call {
+func (mr *MockChooserMockRecorder) Choose(threads, random interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Choose", reflect.TypeOf((*MockChooser)(nil).Choose), threads)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Choose", reflect.TypeOf((*MockChooser)(nil).Choose), threads, random)
 }

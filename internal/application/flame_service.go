@@ -2,6 +2,7 @@ package application
 
 import (
 	"log/slog"
+	"math"
 
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
 )
@@ -20,7 +21,8 @@ func NewFlameService(s Saver, rc Chooser, l *slog.Logger) *FlameService {
 
 // RenderFlame создает и сохраняет фрактальное пламя
 func (s *FlameService) RenderFlame(args *domain.Args) error {
-	renderer := s.rendererChooser.Choose(args.Threads)
+	seed := int64(math.Float64bits(args.Seed))
+	renderer := s.rendererChooser.Choose(args.Threads, seed)
 	s.logger.Debug("Renderer choosed successfully")
 
 	image := renderer.Render(args)
