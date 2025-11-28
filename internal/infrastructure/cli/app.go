@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/urfave/cli/v3"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
@@ -13,14 +14,17 @@ type FlameService interface {
 
 type App struct {
 	FlameService FlameService
+	logger       *slog.Logger
 }
 
-func NewApp(s FlameService) *App {
-	return &App{FlameService: s}
+func NewApp(s FlameService, l *slog.Logger) *App {
+	return &App{FlameService: s, logger: l}
 }
 
 // Run парсит аргументы командной строки и запускает само приложение
 func (a *App) Run(ctx context.Context, args []string) error {
+	a.logger.Info("Starting fractal-flame CLI", "args", args[1:])
+
 	app := &cli.Command{
 		Name:     "fractal-flame",
 		Usage:    "Generates fractal flames",
@@ -94,19 +98,34 @@ func (a *App) Run(ctx context.Context, args []string) error {
 	}
 
 	err := app.Run(ctx, args)
-	return err
+	if err != nil {
+		a.logger.Error("Run application failed", "error", err)
+		return err
+	}
+
+	a.logger.Info("Application finished")
+	return nil
 }
 
 // runApp запускает основной сервис приложения
 func (a *App) runApp(_ context.Context, c *cli.Command) error {
-	args, err := parseArgs(c)
+	a.logger.Info("Parsing CLI arguments")
+
+	args, err := a.parseArgs(c)
 	if err != nil {
+		a.logger.Error("Failed to parse args", "error", err)
 		return err
 	}
+	a.logger.Info("Parsing CLI arguments finished successfully", "args", args)
+
+	a.logger.Info("Starting flame generation")
 
 	err = a.FlameService.RenderFlame(args)
 	if err != nil {
+		a.logger.Error("Failed to generate flame", "error", err)
 		return err
 	}
+	a.logger.Info("Flame generated successfully")
+
 	return nil
 }

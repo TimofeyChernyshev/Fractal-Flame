@@ -13,10 +13,11 @@ import (
 var errConfigArgs error = errors.New("invalid value in config file")
 
 // readConfig считвает конфиг файл и ставит параметрам значения из него
-func readConfig(configPath string, c *cli.Command, args *domain.Args) error {
+func (a *App) readConfig(configPath string, c *cli.Command, args *domain.Args) error {
 	var cfg domain.Args
 	data, _ := os.ReadFile(configPath)
 	if err := json.Unmarshal(data, &cfg); err != nil {
+		a.logger.Error("Failed to parse config file", "error", err)
 		return fmt.Errorf("cannot parse config file: %w", err)
 	}
 
@@ -38,10 +39,12 @@ func readConfig(configPath string, c *cli.Command, args *domain.Args) error {
 		if !c.IsSet(field.cliFlag) && !isZero(field.configVal) {
 			if field.validator != nil {
 				if err := field.validator(field.configVal); err != nil {
+					a.logger.Error("Config contains wrong argument value", "flag", field.cliFlag, "value", field.configVal, "error", err)
 					return fmt.Errorf("%w: %w", errConfigArgs, err)
 				}
 			}
 			setFieldValue(args, field.cliFlag, field.configVal)
+			a.logger.Debug("Get arg from config", "flag", field.cliFlag, "value", field.configVal)
 		}
 	}
 
@@ -49,9 +52,11 @@ func readConfig(configPath string, c *cli.Command, args *domain.Args) error {
 		for _, f := range cfg.Functions {
 			_, ok := domain.Transformations(f.Name).GetTransformation()
 			if !ok {
+				a.logger.Error("Provided function isn't supported", "function", f.Name)
 				return fmt.Errorf("%w %s: %w: transformation function isn't supported", errConfigArgs, f.Name, errFunctionFormat)
 			}
 			if f.Weight <= 0 {
+				a.logger.Error("Function weight lower or equal zero", "weight", f.Weight)
 				return fmt.Errorf("%w %f: weight must be positive number", errConfigArgs, f.Weight)
 			}
 		}

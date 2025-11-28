@@ -7,7 +7,7 @@ import (
 
 // parseArgs парсит аргументы командной строки
 // в порядке консольный ввод, файл конфигурации, дефолтные значения
-func parseArgs(c *cli.Command) (*domain.Args, error) {
+func (a *App) parseArgs(c *cli.Command) (*domain.Args, error) {
 	affine := c.Float64Slice("affine-params")
 
 	args := &domain.Args{
@@ -23,10 +23,14 @@ func parseArgs(c *cli.Command) (*domain.Args, error) {
 		Functions:      parseFunctions(c.StringSlice("functions")),
 	}
 
-	configPath := c.String("config")
 	if c.IsSet("config") {
-		err := readConfig(configPath, c, args)
+		configPath := c.String("config")
+
+		a.logger.Debug("Reading config", "path", configPath)
+
+		err := a.readConfig(configPath, c, args)
 		if err != nil {
+			a.logger.Error("Failed to read config", "error", err)
 			return nil, err
 		}
 	}

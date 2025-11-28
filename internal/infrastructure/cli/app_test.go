@@ -1,9 +1,12 @@
 package cli
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log/slog"
 	"os"
 	"testing"
 
@@ -19,6 +22,7 @@ type appSuite struct {
 	app        *App
 	configFile *os.File
 	wrongFile  *os.File
+	logBuffer  io.Writer
 }
 
 func TestRunAppSuite(t *testing.T) {
@@ -28,7 +32,11 @@ func TestRunAppSuite(t *testing.T) {
 func (s *appSuite) SetupSuite() {
 	s.ctrl = gomock.NewController(s.T())
 	s.service = NewMockFlameService(s.ctrl)
-	s.app = NewApp(s.service)
+
+	s.logBuffer = &bytes.Buffer{}
+	logger := slog.New(slog.NewTextHandler(s.logBuffer, &slog.HandlerOptions{Level: slog.LevelError}))
+
+	s.app = NewApp(s.service, logger)
 
 	tempDir := s.T().TempDir()
 	var err error

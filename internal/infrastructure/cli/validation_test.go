@@ -24,7 +24,7 @@ func (s *validationSuite) SetupSuite() {
 
 	s.config, err = os.CreateTemp(tempDir, "json-*.json")
 	s.Require().NoError(err)
-	s.config.Close()
+	_ = s.config.Close()
 }
 
 func (s *validationSuite) TestValidateDimension() {

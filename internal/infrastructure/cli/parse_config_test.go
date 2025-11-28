@@ -1,7 +1,10 @@
 package cli
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
+	"log/slog"
 	"os"
 	"testing"
 
@@ -12,7 +15,9 @@ import (
 
 type configSuite struct {
 	suite.Suite
+	app             *App
 	wrongConfigFile *os.File
+	logBuffer       io.Writer
 }
 
 func TestRunConfigSuite(t *testing.T) {
@@ -20,6 +25,10 @@ func TestRunConfigSuite(t *testing.T) {
 }
 
 func (s *configSuite) SetupTest() {
+	s.logBuffer = &bytes.Buffer{}
+	logger := slog.New(slog.NewTextHandler(s.logBuffer, &slog.HandlerOptions{Level: slog.LevelError}))
+	s.app = NewApp(nil, logger)
+
 	tempDir := s.T().TempDir()
 	var err error
 
@@ -31,7 +40,7 @@ func (s *configSuite) SetConfigContent(cfgData domain.Args) {
 	jsonBytes, err := json.Marshal(cfgData)
 	s.Require().NoError(err)
 	_, err = s.wrongConfigFile.Write(jsonBytes)
-	s.Require().NoError(err)
+	s.Require().NoError(err, err)
 }
 
 func (s *configSuite) TestParseWrongDimension() {
@@ -41,7 +50,7 @@ func (s *configSuite) TestParseWrongDimension() {
 	s.SetConfigContent(cfg)
 
 	s.Run("wrong dimension", func() {
-		err := readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
+		err := s.app.readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
 		s.Require().ErrorIs(err, errConfigArgs)
 	})
 
@@ -55,7 +64,7 @@ func (s *configSuite) TestParseWrongItCount() {
 	s.SetConfigContent(cfg)
 
 	s.Run("wrong iteration count", func() {
-		err := readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
+		err := s.app.readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
 		s.Require().ErrorIs(err, errConfigArgs)
 	})
 
@@ -69,7 +78,7 @@ func (s *configSuite) TestParseWrongOutputPath() {
 	s.SetConfigContent(cfg)
 
 	s.Run("wrong output path", func() {
-		err := readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
+		err := s.app.readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
 		s.Require().ErrorIs(err, errConfigArgs)
 	})
 
@@ -83,7 +92,7 @@ func (s *configSuite) TestParseWrongAmountOfThreads() {
 	s.SetConfigContent(cfg)
 
 	s.Run("wrong amount of threads", func() {
-		err := readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
+		err := s.app.readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
 		s.Require().ErrorIs(err, errConfigArgs)
 	})
 
@@ -97,7 +106,7 @@ func (s *configSuite) TestParseWrongFunctionName() {
 	s.SetConfigContent(cfg)
 
 	s.Run("wrong function name", func() {
-		err := readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
+		err := s.app.readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
 		s.Require().ErrorIs(err, errConfigArgs)
 	})
 
@@ -111,7 +120,7 @@ func (s *configSuite) TestParseWrongfunctionWeight() {
 	s.SetConfigContent(cfg)
 
 	s.Run("wrong function weight", func() {
-		err := readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
+		err := s.app.readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
 		s.Require().ErrorIs(err, errConfigArgs)
 	})
 
