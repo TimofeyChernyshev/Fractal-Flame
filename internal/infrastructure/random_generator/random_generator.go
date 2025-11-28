@@ -1,4 +1,4 @@
-package random_impl
+package random_generator
 
 import "math/rand"
 
