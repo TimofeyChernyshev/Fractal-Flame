@@ -1,6 +1,6 @@
 package domain
 
-import "math/rand"
+import "gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/pkg/random"
 
 // Rectangle представляет область, в которой находится фрактал
 type Rectangle struct {
@@ -15,7 +15,7 @@ func NewRectangle(x, y, width, height float64) Rectangle {
 }
 
 // RandomPoint возвращает случайную точку в границах квадрата
-func (r Rectangle) RandomPoint(rnd *rand.Rand) Point {
+func (r Rectangle) RandomPoint(rnd random.Random) Point {
 	x := rnd.Float64()*r.Width + r.X
 	y := rnd.Float64()*r.Height + r.Y
 	return NewPoint(x, y)
