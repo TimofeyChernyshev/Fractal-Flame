@@ -12,17 +12,20 @@ type FlameService struct {
 	logger          *slog.Logger
 	saver           Saver
 	rendererChooser Chooser
+	randomGenerator RandomGenerator
 }
 
 // NewFlameService возвращает новый экземпляр FlameService
-func NewFlameService(s Saver, rc Chooser, l *slog.Logger) *FlameService {
-	return &FlameService{saver: s, rendererChooser: rc, logger: l}
+func NewFlameService(s Saver, rc Chooser, rg RandomGenerator, l *slog.Logger) *FlameService {
+	return &FlameService{saver: s, rendererChooser: rc, randomGenerator: rg, logger: l}
 }
 
 // RenderFlame создает и сохраняет фрактальное пламя
 func (s *FlameService) RenderFlame(args *domain.Args) error {
 	seed := int64(math.Float64bits(args.Seed))
-	renderer := s.rendererChooser.Choose(args.Threads, seed)
+	randomGen := s.randomGenerator.New(seed)
+
+	renderer := s.rendererChooser.Choose(args.Threads, randomGen)
 	s.logger.Debug("Renderer choosed successfully")
 
 	image := renderer.Render(args)
