@@ -33,15 +33,11 @@ func TestSingleThreadRenderer_Render(t *testing.T) {
 	mockRnd.EXPECT().Intn(255).Return(200).Times(1) // B
 
 	// point := r.rect.RandomPoint(rnd)
-	mockRnd.EXPECT().Float64().Return(0.5) // X
-	mockRnd.EXPECT().Float64().Return(0.5) // Y
+	mockRnd.EXPECT().Float64().Return(0.5).Times(2) // X, Y
 
-	// Each iteration: getWeightedFunctionIndex(r.rnd, totalFuncWeight, args.Functions)
-	// j loops: shift + iterForPoint = 20 + 50 = 70 calls
-	const jCalls = 70
-	for i := 0; i < jCalls; i++ {
-		mockRnd.EXPECT().Float64().Return(0.0)
-	}
+	// getWeightedFunctionIndex(r.rnd, totalFuncWeight, args.Functions)
+	const calls = shift + iterPerPoint
+	mockRnd.EXPECT().Float64().Return(0.0).Times(calls)
 
 	renderer := NewSingleThreadRenderer(mockRnd)
 
