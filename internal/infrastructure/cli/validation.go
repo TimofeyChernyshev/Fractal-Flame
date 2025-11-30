@@ -19,6 +19,7 @@ var (
 	errAffineParams   error = errors.New("wrong amount of affine params")
 	errFunctionFormat error = errors.New("function provided in wrong format")
 	errConfigExt      error = errors.New("wrong config file extension")
+	errWrongGamma     error = errors.New("wrong value for gamma")
 )
 
 func validateDimension(d int) error {
@@ -109,6 +110,14 @@ func validateConfig(c string) error {
 	_, err := os.ReadFile(c)
 	if err != nil {
 		return fmt.Errorf("cannot read config file: %w", err)
+	}
+
+	return nil
+}
+
+func validateGamma(g float64) error {
+	if g == 0 {
+		return errWrongGamma
 	}
 
 	return nil

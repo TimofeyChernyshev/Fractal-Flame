@@ -272,3 +272,35 @@ func (s *validationSuite) TestValidateConfig() {
 		})
 	}
 }
+
+func (s *validationSuite) TestValidateGamma() {
+	tests := []struct {
+		name        string
+		gamma       float64
+		expectedErr error
+	}{
+		{
+			name:        "valid gamma",
+			gamma:       2.0,
+			expectedErr: nil,
+		},
+		{
+			name:        "wrong gamma",
+			gamma:       0,
+			expectedErr: errWrongGamma,
+		},
+		{
+			name:        "negative gamma",
+			gamma:       -2,
+			expectedErr: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		s.Run(tt.name, func() {
+			err := validateGamma(tt.gamma)
+
+			s.Require().ErrorIs(err, tt.expectedErr)
+		})
+	}
+}

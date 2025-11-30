@@ -93,6 +93,17 @@ func (a *App) Run(ctx context.Context, args []string) error {
 				Usage:     "Relative path to json config file",
 				Validator: validateConfig,
 			},
+			&cli.BoolFlag{
+				Name:    "gamma-correction",
+				Aliases: []string{"g"},
+				Usage:   "Enable gamma correction",
+			},
+			&cli.Float64Flag{
+				Name:      "gamma",
+				Value:     2.2,
+				Usage:     "Gamma value for bright correction of final image",
+				Validator: validateGamma,
+			},
 		},
 		Action: a.runApp,
 	}

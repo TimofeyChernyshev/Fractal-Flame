@@ -15,12 +15,18 @@ func (a *App) parseArgs(c *cli.Command) (*domain.Args, error) {
 			Width:  c.Int("width"),
 			Height: c.Int("height"),
 		},
-		Seed:           c.Float64("seed"),
-		IterationCount: c.Int("iteration-count"),
-		OutputPath:     c.String("output-path"),
-		Threads:        c.Int("threads"),
-		AffineParams:   domain.AffineParam{A: affine[0], B: affine[1], C: affine[2], D: affine[3], E: affine[4], F: affine[5]},
-		Functions:      parseFunctions(c.StringSlice("functions")),
+		Seed:            c.Float64("seed"),
+		IterationCount:  c.Int("iteration-count"),
+		OutputPath:      c.String("output-path"),
+		Threads:         c.Int("threads"),
+		AffineParams:    domain.AffineParam{A: affine[0], B: affine[1], C: affine[2], D: affine[3], E: affine[4], F: affine[5]},
+		Functions:       parseFunctions(c.StringSlice("functions")),
+		GammaCorrection: c.Bool("gamma-correction"),
+		Gamma:           c.Float64("gamma"),
+	}
+
+	if c.IsSet("gamma") && !c.IsSet("gamma-correction") {
+		args.GammaCorrection = true
 	}
 
 	if c.IsSet("config") {

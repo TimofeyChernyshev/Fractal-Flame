@@ -33,6 +33,8 @@ func (a *App) readConfig(configPath string, c *cli.Command, args *domain.Args) e
 		{"output-path", cfg.OutputPath, func(v interface{}) error { return validateOutput(v.(string)) }},
 		{"threads", cfg.Threads, func(v interface{}) error { return validateThreads(v.(int)) }},
 		{"affine-params", cfg.AffineParams, nil},
+		{"gamma-correction", cfg.GammaCorrection, nil},
+		{"gamma", cfg.Gamma, func(v interface{}) error { return validateGamma(v.(float64)) }},
 	}
 
 	for _, field := range fieldMap {
@@ -83,6 +85,10 @@ func setFieldValue(args *domain.Args, field string, value interface{}) {
 		args.Threads = value.(int)
 	case "affine-params":
 		args.AffineParams = value.(domain.AffineParam)
+	case "gamma-correction":
+		args.GammaCorrection = value.(bool)
+	case "gamma":
+		args.Gamma = value.(float64)
 	}
 }
 
@@ -97,6 +103,8 @@ func isZero(v interface{}) bool {
 		return val == ""
 	case domain.AffineParam:
 		return val.A == 0 && val.B == 0 && val.C == 0 && val.D == 0 && val.E == 0 && val.F == 0
+	case bool:
+		return v == false
 	default:
 		return true
 	}

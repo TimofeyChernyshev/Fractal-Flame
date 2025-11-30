@@ -1,13 +1,15 @@
 package domain
 
 type Args struct {
-	Size           Size        `json:"size"`
-	IterationCount int         `json:"iteration_count"`
-	OutputPath     string      `json:"output_path"`
-	Threads        int         `json:"threads"`
-	Seed           float64     `json:"seed"`
-	Functions      []Function  `json:"functions"`
-	AffineParams   AffineParam `json:"affine_params"`
+	Size            Size        `json:"size"`
+	IterationCount  int         `json:"iteration_count"`
+	OutputPath      string      `json:"output_path"`
+	Threads         int         `json:"threads"`
+	Seed            float64     `json:"seed"`
+	Functions       []Function  `json:"functions"`
+	AffineParams    AffineParam `json:"affine_params"`
+	GammaCorrection bool        `json:"gamma_correction"`
+	Gamma           float64     `json:"gamma"`
 }
 
 type Size struct {

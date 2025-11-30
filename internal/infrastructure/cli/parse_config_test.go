@@ -126,3 +126,17 @@ func (s *configSuite) TestParseWrongfunctionWeight() {
 
 	_ = s.wrongConfigFile.Close()
 }
+
+func (s *configSuite) TestParseGammaEqZero() {
+	cfg := domain.Args{
+		Gamma: 0,
+	}
+	s.SetConfigContent(cfg)
+
+	s.Run("gamma value equal zero", func() {
+		err := s.app.readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
+		s.Require().NoError(err)
+	})
+
+	_ = s.wrongConfigFile.Close()
+}
