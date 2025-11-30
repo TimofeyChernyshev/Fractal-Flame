@@ -239,3 +239,42 @@ func TestHeart(t *testing.T) {
 		})
 	}
 }
+
+func TestCosine(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		input    Point
+		expected Point
+	}{
+		{
+			name:     "origin point",
+			input:    NewPoint(0, 0),
+			expected: NewPoint(1, 0),
+		},
+		{
+			name:     "point (1, 0)",
+			input:    NewPoint(1, 0),
+			expected: NewPoint(-1, 0),
+		},
+		{
+			name:     "point (0, 1)",
+			input:    NewPoint(0, 1),
+			expected: NewPoint(math.Cosh(1), 0),
+		},
+		{
+			name:     "point (0.5, 0.5)",
+			input:    NewPoint(0.5, 0.5),
+			expected: NewPoint(0, -math.Sinh(0.5)),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := cosine(tt.input)
+			require.InDelta(t, tt.expected.X, result.X, 1e-9)
+			require.InDelta(t, tt.expected.Y, result.Y, 1e-9)
+		})
+	}
+}

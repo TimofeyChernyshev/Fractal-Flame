@@ -10,6 +10,7 @@ const (
 	Sinusoidal Transformations = "sinusoidal"
 	Spherical  Transformations = "spherical"
 	Heart      Transformations = "heart"
+	Cosine     Transformations = "cosine"
 )
 
 var AvailableTransformations = map[Transformations]TransFunc{
@@ -18,6 +19,7 @@ var AvailableTransformations = map[Transformations]TransFunc{
 	Sinusoidal: sinusoidal,
 	Spherical:  spherical,
 	Heart:      heart,
+	Cosine:     cosine,
 }
 
 func (t Transformations) GetTransformation() (TransFunc, bool) {
@@ -67,6 +69,13 @@ func heart(point Point) Point {
 	tetha := math.Atan2(point.X, point.Y)
 	newX := r * math.Sin(tetha*r)
 	newY := -r * math.Cos(tetha*r)
+
+	return NewPoint(newX, newY)
+}
+
+func cosine(point Point) Point {
+	newX := math.Cos(math.Pi*point.X) * math.Cosh(point.Y)
+	newY := -math.Sin(math.Pi*point.X) * math.Sinh(point.Y)
 
 	return NewPoint(newX, newY)
 }
