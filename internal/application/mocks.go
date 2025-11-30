@@ -9,7 +9,6 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	domain "gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
-	random "gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/pkg/random"
 )
 
 // MockRenderer is a mock of Renderer interface.
@@ -110,52 +109,15 @@ func (m *MockChooser) EXPECT() *MockChooserMockRecorder {
 }
 
 // Choose mocks base method.
-func (m *MockChooser) Choose(threads int, random random.Random) Renderer {
+func (m *MockChooser) Choose(threads int) Renderer {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Choose", threads, random)
+	ret := m.ctrl.Call(m, "Choose", threads)
 	ret0, _ := ret[0].(Renderer)
 	return ret0
 }
 
 // Choose indicates an expected call of Choose.
-func (mr *MockChooserMockRecorder) Choose(threads, random interface{}) *gomock.Call {
+func (mr *MockChooserMockRecorder) Choose(threads interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Choose", reflect.TypeOf((*MockChooser)(nil).Choose), threads, random)
-}
-
-// MockRandomGenerator is a mock of RandomGenerator interface.
-type MockRandomGenerator struct {
-	ctrl     *gomock.Controller
-	recorder *MockRandomGeneratorMockRecorder
-}
-
-// MockRandomGeneratorMockRecorder is the mock recorder for MockRandomGenerator.
-type MockRandomGeneratorMockRecorder struct {
-	mock *MockRandomGenerator
-}
-
-// NewMockRandomGenerator creates a new mock instance.
-func NewMockRandomGenerator(ctrl *gomock.Controller) *MockRandomGenerator {
-	mock := &MockRandomGenerator{ctrl: ctrl}
-	mock.recorder = &MockRandomGeneratorMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockRandomGenerator) EXPECT() *MockRandomGeneratorMockRecorder {
-	return m.recorder
-}
-
-// New mocks base method.
-func (m *MockRandomGenerator) New(seed int64) random.Random {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "New", seed)
-	ret0, _ := ret[0].(random.Random)
-	return ret0
-}
-
-// New indicates an expected call of New.
-func (mr *MockRandomGeneratorMockRecorder) New(seed interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "New", reflect.TypeOf((*MockRandomGenerator)(nil).New), seed)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Choose", reflect.TypeOf((*MockChooser)(nil).Choose), threads)
 }

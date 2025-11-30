@@ -2,7 +2,6 @@ package application
 
 import (
 	"log/slog"
-	"math"
 
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
 )
@@ -12,20 +11,16 @@ type FlameService struct {
 	logger          *slog.Logger
 	saver           Saver
 	rendererChooser Chooser
-	randomGenerator RandomGenerator
 }
 
 // NewFlameService возвращает новый экземпляр FlameService
-func NewFlameService(s Saver, rc Chooser, rg RandomGenerator, l *slog.Logger) *FlameService {
-	return &FlameService{saver: s, rendererChooser: rc, randomGenerator: rg, logger: l}
+func NewFlameService(s Saver, rc Chooser, l *slog.Logger) *FlameService {
+	return &FlameService{saver: s, rendererChooser: rc, logger: l}
 }
 
 // RenderFlame создает и сохраняет фрактальное пламя
 func (s *FlameService) RenderFlame(args *domain.Args) error {
-	seed := int64(math.Float64bits(args.Seed))
-	randomGen := s.randomGenerator.New(seed)
-
-	renderer := s.rendererChooser.Choose(args.Threads, randomGen)
+	renderer := s.rendererChooser.Choose(args.Threads)
 	s.logger.Debug("Renderer choosed successfully")
 
 	image := renderer.Render(args)
@@ -36,6 +31,7 @@ func (s *FlameService) RenderFlame(args *domain.Args) error {
 		s.logger.Error("Saving image failed", "path", args.OutputPath, "error", err)
 		return err
 	}
+	s.logger.Debug("Image saved", "path", args.OutputPath)
 
 	s.logger.Debug("Flame rendered and saved successfully")
 	return nil

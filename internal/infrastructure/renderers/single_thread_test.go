@@ -1,6 +1,7 @@
 package renderers
 
 import (
+	"math"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -14,6 +15,7 @@ func TestSingleThreadRenderer_Render(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRnd := random.NewMockRandom(ctrl)
+	mockRndGen := NewMockRandomGenerator(ctrl)
 
 	args := &domain.Args{
 		Size:           domain.Size{Width: 5, Height: 5},
@@ -21,11 +23,15 @@ func TestSingleThreadRenderer_Render(t *testing.T) {
 		Functions: []domain.Function{
 			{Name: domain.Transformations("swirl"), Weight: 1.0},
 		},
+		Seed: 0.0,
 		AffineParams: domain.AffineParam{
 			A: 1, B: 0, C: 0,
 			D: 1, E: 0, F: 0,
 		},
 	}
+
+	seed := int64(math.Float64bits(args.Seed))
+	mockRndGen.EXPECT().New(seed).Return(mockRnd)
 
 	// colors := RandomColors(rnd, 1)
 	mockRnd.EXPECT().Intn(255).Return(100).Times(1) // R
@@ -39,7 +45,7 @@ func TestSingleThreadRenderer_Render(t *testing.T) {
 	const calls = shift + iterPerPoint
 	mockRnd.EXPECT().Float64().Return(0.0).Times(calls)
 
-	renderer := NewSingleThreadRenderer(mockRnd)
+	renderer := NewSingleThreadRenderer(mockRndGen)
 
 	img := renderer.Render(args)
 

@@ -5,18 +5,25 @@ import (
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/pkg/random"
 )
 
+type RandomGenerator interface {
+	New(seed int64) random.Random
+}
+
 type Chooser struct {
+	rndGen RandomGenerator
 }
 
-func NewChooser() *Chooser {
-	return &Chooser{}
+func NewChooser(rndGen RandomGenerator) *Chooser {
+	return &Chooser{
+		rndGen: rndGen,
+	}
 }
 
-func (c *Chooser) Choose(threads int, rnd random.Random) application.Renderer {
+func (c *Chooser) Choose(threads int) application.Renderer {
 	switch threads {
 	case 1:
-		return NewSingleThreadRenderer(rnd)
+		return NewSingleThreadRenderer(c.rndGen)
 	default:
-		return NewMultiThreadRenderer(rnd)
+		return NewMultiThreadRenderer(c.rndGen)
 	}
 }

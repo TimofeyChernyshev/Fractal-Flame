@@ -5,23 +5,19 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
-	"math"
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
-	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/pkg/random"
 )
 
 type serviceSuite struct {
 	suite.Suite
-	saver     *MockSaver
-	renderer  *MockRenderer
-	chooser   *MockChooser
-	randomGen *MockRandomGenerator
-	random    *random.MockRandom
-	ctrl      *gomock.Controller
+	saver    *MockSaver
+	renderer *MockRenderer
+	chooser  *MockChooser
+	ctrl     *gomock.Controller
 
 	service   *FlameService
 	logBuffer io.Writer
@@ -38,13 +34,11 @@ func (s *serviceSuite) SetupSuite() {
 	s.saver = NewMockSaver(s.ctrl)
 	s.renderer = NewMockRenderer(s.ctrl)
 	s.chooser = NewMockChooser(s.ctrl)
-	s.randomGen = NewMockRandomGenerator(s.ctrl)
-	s.random = random.NewMockRandom(s.ctrl)
 
 	s.logBuffer = &bytes.Buffer{}
 	logger := slog.New(slog.NewTextHandler(s.logBuffer, &slog.HandlerOptions{Level: slog.LevelError}))
 
-	s.service = NewFlameService(s.saver, s.chooser, s.randomGen, logger)
+	s.service = NewFlameService(s.saver, s.chooser, logger)
 
 	s.args = &domain.Args{
 		Size:           domain.Size{Height: 999, Width: 999},
@@ -69,11 +63,8 @@ func (s *serviceSuite) TearDownSuite() {
 }
 
 func (s *serviceSuite) TestParseArgs() {
-	seed := int64(math.Float64bits(s.args.Seed))
-
 	s.Run("No errors", func() {
-		s.randomGen.EXPECT().New(seed).Return(s.random)
-		s.chooser.EXPECT().Choose(s.args.Threads, s.random).Return(s.renderer)
+		s.chooser.EXPECT().Choose(s.args.Threads).Return(s.renderer)
 		s.renderer.EXPECT().Render(s.args).Return(s.image)
 		s.saver.EXPECT().Save(s.image, "cfg.png").Return(nil)
 
@@ -83,11 +74,8 @@ func (s *serviceSuite) TestParseArgs() {
 }
 
 func (s *serviceSuite) TestSaverReturnErr() {
-	seed := int64(math.Float64bits(s.args.Seed))
-
 	s.Run("saver return error", func() {
-		s.randomGen.EXPECT().New(seed).Return(s.random)
-		s.chooser.EXPECT().Choose(s.args.Threads, s.random).Return(s.renderer)
+		s.chooser.EXPECT().Choose(s.args.Threads).Return(s.renderer)
 		s.renderer.EXPECT().Render(s.args).Return(s.image)
 		s.saver.EXPECT().Save(s.image, "cfg.png").Return(fmt.Errorf("some error"))
 
