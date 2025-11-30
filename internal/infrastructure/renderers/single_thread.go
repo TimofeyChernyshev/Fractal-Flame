@@ -31,7 +31,7 @@ func (r *SingleThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
 
 	for range args.IterationCount {
 		point := r.rect.RandomPoint(r.rnd)
-		for j := range shift + iterForPoint {
+		for j := range shift + iterPerPoint {
 			point = domain.AffineTransform(point, args.AffineParams)
 
 			index := getWeightedFunctionIndex(r.rnd, totalFuncWeight, args.Functions)
