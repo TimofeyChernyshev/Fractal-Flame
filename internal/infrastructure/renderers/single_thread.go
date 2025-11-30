@@ -29,26 +29,7 @@ func (r *SingleThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
 		totalFuncWeight += f.Weight
 	}
 
-	for range args.IterationCount {
-		point := r.rect.RandomPoint(r.rnd)
-		for j := range shift + iterPerPoint {
-			point = domain.AffineTransform(point, args.AffineParams)
+	renderIterations(r.rect, args, colors, totalFuncWeight, fractalImage, r.rnd, 0, args.IterationCount)
 
-			index := getWeightedFunctionIndex(r.rnd, totalFuncWeight, args.Functions)
-
-			functionColor := colors[index]
-			transformation, _ := args.Functions[index].Name.GetTransformation()
-			point = transformation(point)
-
-			if j >= shift {
-				if r.rect.Contains(point) {
-					pixel, ok := mapPoint(point, fractalImage, r.rect)
-					if ok {
-						pixel.ColorPixel(functionColor)
-					}
-				}
-			}
-		}
-	}
 	return fractalImage
 }

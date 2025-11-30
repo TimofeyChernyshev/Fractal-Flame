@@ -25,3 +25,34 @@ func mapPoint(point domain.Point, fi *domain.FractalImage, rect domain.Rectangle
 
 	return fi.GetPixel(x, y)
 }
+
+func renderIterations(
+	rect domain.Rectangle,
+	args *domain.Args,
+	colors []domain.Color,
+	totalFuncWeight float64,
+	image *domain.FractalImage,
+	rnd random.Random,
+	startIter int,
+	endIter int,
+) {
+	for iter := startIter; iter < endIter; iter++ {
+		point := rect.RandomPoint(rnd)
+
+		for j := 0; j < shift+iterPerPoint; j++ {
+			point = domain.AffineTransform(point, args.AffineParams)
+
+			index := getWeightedFunctionIndex(rnd, totalFuncWeight, args.Functions)
+			functionColor := colors[index]
+
+			transformation, _ := args.Functions[index].Name.GetTransformation()
+			point = transformation(point)
+
+			if j >= shift && rect.Contains(point) {
+				if pixel, ok := mapPoint(point, image, rect); ok {
+					pixel.ColorPixel(functionColor)
+				}
+			}
+		}
+	}
+}
