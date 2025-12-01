@@ -24,6 +24,7 @@ func (a *App) parseArgs(c *cli.Command) (*domain.Args, error) {
 		Functions:       parseFunctions(c.StringSlice("functions")),
 		GammaCorrection: c.Bool("gamma-correction"),
 		Gamma:           c.Float64("gamma"),
+		SymmetryLevel:   c.Int("symmetry-level"),
 	}
 
 	args.AffineParams = make([]domain.AffineParam, affineParamsCount)

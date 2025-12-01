@@ -10,6 +10,7 @@ type Args struct {
 	AffineParams    []AffineParam `json:"affine_params"`
 	GammaCorrection bool          `json:"gamma_correction"`
 	Gamma           float64       `json:"gamma"`
+	SymmetryLevel   int           `json:"symmetry_level"`
 }
 
 type Size struct {

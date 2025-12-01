@@ -34,6 +34,7 @@ func (a *App) readConfig(configPath string, c *cli.Command, args *domain.Args) e
 		{"threads", cfg.Threads, func(v interface{}) error { return validateThreads(v.(int)) }},
 		{"gamma-correction", cfg.GammaCorrection, nil},
 		{"gamma", cfg.Gamma, func(v interface{}) error { return validateGamma(v.(float64)) }},
+		{"symmetry-level", cfg.SymmetryLevel, func(v interface{}) error { return validateSymmetryLevel(v.(int)) }},
 	}
 
 	for _, field := range fieldMap {
@@ -95,6 +96,8 @@ func setFieldValue(args *domain.Args, field string, value interface{}) {
 		args.GammaCorrection = value.(bool)
 	case "gamma":
 		args.Gamma = value.(float64)
+	case "symmetry-level":
+		args.SymmetryLevel = value.(int)
 	}
 }
 

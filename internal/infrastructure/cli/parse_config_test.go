@@ -157,3 +157,17 @@ func (s *configSuite) TestAffines() {
 
 	_ = s.wrongConfigFile.Close()
 }
+
+func (s *configSuite) TestParseWrongSymmetryLevel() {
+	cfg := domain.Args{
+		SymmetryLevel: -20,
+	}
+	s.SetConfigContent(cfg)
+
+	s.Run("wrong amount of symmetry level", func() {
+		err := s.app.readConfig(s.wrongConfigFile.Name(), &cli.Command{}, &domain.Args{})
+		s.Require().ErrorIs(err, errWrongSymmetryLevel)
+	})
+
+	_ = s.wrongConfigFile.Close()
+}

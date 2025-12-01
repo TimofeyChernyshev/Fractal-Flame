@@ -12,14 +12,15 @@ import (
 )
 
 var (
-	errWrongDimension error = errors.New("dimension is lower or equal zero")
-	errIterationCount error = errors.New("iteration count is lower or equal zero")
-	errWrongOutput    error = errors.New("cannot create file with output param")
-	errThreadsCount   error = errors.New("threads count is lower or equal zero")
-	errAffineParams   error = errors.New("wrong amount of affine params")
-	errFunctionFormat error = errors.New("function provided in wrong format")
-	errConfigExt      error = errors.New("wrong config file extension")
-	errWrongGamma     error = errors.New("wrong value for gamma")
+	errWrongDimension     error = errors.New("dimension is lower or equal zero")
+	errIterationCount     error = errors.New("iteration count is lower or equal zero")
+	errWrongOutput        error = errors.New("cannot create file with output param")
+	errThreadsCount       error = errors.New("threads count is lower or equal zero")
+	errAffineParams       error = errors.New("wrong amount of affine params")
+	errFunctionFormat     error = errors.New("function provided in wrong format")
+	errConfigExt          error = errors.New("wrong config file extension")
+	errWrongGamma         error = errors.New("wrong value for gamma")
+	errWrongSymmetryLevel error = errors.New("wrong symmetry level")
 )
 
 func validateDimension(d int) error {
@@ -118,6 +119,14 @@ func validateConfig(c string) error {
 func validateGamma(g float64) error {
 	if g == 0 {
 		return errWrongGamma
+	}
+
+	return nil
+}
+
+func validateSymmetryLevel(l int) error {
+	if l < 1 {
+		return errWrongSymmetryLevel
 	}
 
 	return nil

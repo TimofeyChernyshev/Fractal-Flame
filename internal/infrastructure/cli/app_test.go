@@ -53,6 +53,7 @@ func (s *appSuite) SetupSuite() {
 		AffineParams:    []domain.AffineParam{{A: 2, B: 2, C: 2, D: 2, E: 2, F: 2}},
 		GammaCorrection: true,
 		Gamma:           2,
+		SymmetryLevel:   5,
 	}
 	jsonBytes, err := json.Marshal(cfg)
 	s.Require().NoError(err)
@@ -90,13 +91,14 @@ func (s *appSuite) TestParseArgs() {
 				AffineParams:    []domain.AffineParam{{A: 0.1, B: 0.1, C: 0.1, D: 0.1, E: 0.1, F: 0.1}},
 				GammaCorrection: false,
 				Gamma:           2.2,
+				SymmetryLevel:   1,
 			},
 		},
 		{
 			name: "set all flags",
 			args: []string{"fractal-flame", "--height", "1", "--width", "1", "--iteration-count", "1",
 				"--output-path", ".png", "--threads", "5", "--seed", "1", "--affine-params", "1,1,1,1,1,1", "--functions", "swirl:0.5,horseshoe:0.1",
-				"--gamma-correction", "--gamma", "2",
+				"--gamma-correction", "--gamma", "2", "--symmetry-level", "5",
 			},
 			expectedArgs: &domain.Args{
 				Size:            domain.Size{Height: 1, Width: 1},
@@ -108,13 +110,14 @@ func (s *appSuite) TestParseArgs() {
 				AffineParams:    []domain.AffineParam{{A: 1, B: 1, C: 1, D: 1, E: 1, F: 1}},
 				GammaCorrection: true,
 				Gamma:           2,
+				SymmetryLevel:   5,
 			},
 		},
 		{
 			name: "set all flags and config",
 			args: []string{"fractal-flame", "--height", "1", "--width", "1", "--iteration-count", "1",
 				"--output-path", ".png", "--threads", "5", "--seed", "1", "--affine-params", "1,1,1,1,1,1", "--functions", "swirl:0.5,horseshoe:0.1",
-				"--config", s.configFile.Name(), "--gamma", "2",
+				"--config", s.configFile.Name(), "--gamma", "2", "-s", "100",
 			},
 			expectedArgs: &domain.Args{
 				Size:            domain.Size{Height: 1, Width: 1},
@@ -126,6 +129,7 @@ func (s *appSuite) TestParseArgs() {
 				AffineParams:    []domain.AffineParam{{A: 1, B: 1, C: 1, D: 1, E: 1, F: 1}},
 				GammaCorrection: true,
 				Gamma:           2,
+				SymmetryLevel:   100,
 			},
 		},
 		{
@@ -141,6 +145,7 @@ func (s *appSuite) TestParseArgs() {
 				AffineParams:    []domain.AffineParam{{A: 2, B: 2, C: 2, D: 2, E: 2, F: 2}},
 				GammaCorrection: true,
 				Gamma:           2,
+				SymmetryLevel:   5,
 			},
 		},
 	}
@@ -165,6 +170,7 @@ func (s *appSuite) TestServiceReturnErr() {
 			AffineParams:    []domain.AffineParam{{A: 0.1, B: 0.1, C: 0.1, D: 0.1, E: 0.1, F: 0.1}},
 			GammaCorrection: false,
 			Gamma:           2.2,
+			SymmetryLevel:   1,
 		}).Return(fmt.Errorf("some error"))
 		err := s.app.Run(context.Background(), []string{"fractal-flame"})
 		s.Require().Error(err)

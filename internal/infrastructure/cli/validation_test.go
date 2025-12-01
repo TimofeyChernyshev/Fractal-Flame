@@ -304,3 +304,35 @@ func (s *validationSuite) TestValidateGamma() {
 		})
 	}
 }
+
+func (s *validationSuite) TestValidateSymmetryLevel() {
+	tests := []struct {
+		name        string
+		level       int
+		expectedErr error
+	}{
+		{
+			name:        "valid symmetry level",
+			level:       2.0,
+			expectedErr: nil,
+		},
+		{
+			name:        "wrong symmetry level",
+			level:       0,
+			expectedErr: errWrongSymmetryLevel,
+		},
+		{
+			name:        "negative symmetry level",
+			level:       -2,
+			expectedErr: errWrongSymmetryLevel,
+		},
+	}
+
+	for _, tt := range tests {
+		s.Run(tt.name, func() {
+			err := validateSymmetryLevel(tt.level)
+
+			s.Require().ErrorIs(err, tt.expectedErr)
+		})
+	}
+}

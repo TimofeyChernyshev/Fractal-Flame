@@ -104,6 +104,13 @@ func (a *App) Run(ctx context.Context, args []string) error {
 				Usage:     "Gamma value for bright correction of final image",
 				Validator: validateGamma,
 			},
+			&cli.IntFlag{
+				Name:      "symmetry-level",
+				Aliases:   []string{"s"},
+				Value:     1,
+				Usage:     "Amount symmetry parts in final image",
+				Validator: validateSymmetryLevel,
+			},
 		},
 		Action: a.runApp,
 	}
