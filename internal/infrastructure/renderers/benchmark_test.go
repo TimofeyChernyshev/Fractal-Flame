@@ -1,6 +1,7 @@
 package renderers
 
 import (
+	"strconv"
 	"testing"
 
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
@@ -31,25 +32,13 @@ func BenchmarkRenderers(b *testing.B) {
 		iterations int
 		threads    int
 	}{
-		{"1k", 1_000, 4},
-		{"10k", 10_000, 4},
-		{"100k", 100_000, 4},
+		{"1k", 1_000, 1}, {"1l", 1_000, 2}, {"1l", 1_000, 4}, {"1l", 1_000, 8},
+		{"10k", 10_000, 1}, {"10k", 10_000, 2}, {"10k", 10_000, 4}, {"10k", 10_000, 8},
+		{"100k", 100_000, 1}, {"100k", 100_000, 2}, {"100k", 100_000, 4}, {"100k", 100_000, 8},
 	}
 
 	for _, tc := range testCases {
-		b.Run(tc.name+"_SingleThread", func(b *testing.B) {
-			args := createArgs(tc.iterations, 1)
-
-			b.ResetTimer()
-
-			for i := 0; i < b.N; i++ {
-				rnd := random_generator.NewGenerator()
-				renderer := NewSingleThreadRenderer(rnd)
-				renderer.Render(args)
-			}
-		})
-
-		b.Run(tc.name+"_MultiThread", func(b *testing.B) {
+		b.Run(tc.name+"_Thread_"+strconv.Itoa(tc.threads), func(b *testing.B) {
 			args := createArgs(tc.iterations, tc.threads)
 
 			b.ResetTimer()
