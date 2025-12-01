@@ -77,7 +77,7 @@ func (a *App) Run(ctx context.Context, args []string) error {
 			&cli.Float64SliceFlag{
 				Name:      "affine-params",
 				Aliases:   []string{"ap"},
-				Value:     []float64{0.1, 0.1, 0.1, 0.1, 0.1, 0.1},
+				Value:     []float64{0.9, 0.7, 0, -0.15, -1.1, 0},
 				Usage:     "Affine transform params <a>,<b>,<c>,<d>,<e>,<f>",
 				Validator: validateAffineParams,
 			},
