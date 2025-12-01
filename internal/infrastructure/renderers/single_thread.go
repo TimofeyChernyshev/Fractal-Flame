@@ -34,5 +34,9 @@ func (r *SingleThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
 
 	renderIterations(r.rect, args, colors, totalFuncWeight, fractalImage, rnd, 0, args.IterationCount)
 
+	if args.GammaCorrection {
+		gammaCorrection(fractalImage, args.Gamma)
+	}
+
 	return fractalImage
 }

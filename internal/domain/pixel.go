@@ -3,6 +3,7 @@ package domain
 type Pixel struct {
 	Color    Color
 	HitCount uint32
+	Normal   float64
 }
 
 // ColorPixel изменяет цвет пикселя на основе количества попаданий в него

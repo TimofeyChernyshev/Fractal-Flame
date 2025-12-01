@@ -74,6 +74,10 @@ func (r *MultiThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
 		r.mergeImages(finalImage, workerImage)
 	}
 
+	if args.GammaCorrection {
+		gammaCorrection(finalImage, args.Gamma)
+	}
+
 	return finalImage
 }
 

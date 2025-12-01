@@ -1,6 +1,8 @@
 package renderers
 
 import (
+	"math"
+
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/pkg/random"
 )
@@ -52,6 +54,40 @@ func renderIterations(
 				if pixel, ok := mapPoint(point, image, rect); ok {
 					pixel.ColorPixel(functionColor)
 				}
+			}
+		}
+	}
+}
+
+func gammaCorrection(fractalImage *domain.FractalImage, gamma float64) {
+	maxNormal := 0.0
+
+	for y := range fractalImage.Height {
+		for x := range fractalImage.Width {
+			pixel, _ := fractalImage.GetPixel(x, y)
+			if pixel.HitCount > 0 {
+				pixel.Normal = math.Log10(float64(pixel.HitCount))
+				if pixel.Normal > maxNormal {
+					maxNormal = pixel.Normal
+				}
+			}
+		}
+	}
+
+	if maxNormal == 0 {
+		return
+	}
+
+	for y := range fractalImage.Height {
+		for x := range fractalImage.Width {
+			pixel, _ := fractalImage.GetPixel(x, y)
+			if pixel.HitCount > 0 {
+				pixel.Normal /= maxNormal
+				scale := math.Pow(pixel.Normal, 1.0/gamma)
+
+				pixel.Color.R = uint32(float64(pixel.Color.R) * scale)
+				pixel.Color.G = uint32(float64(pixel.Color.G) * scale)
+				pixel.Color.B = uint32(float64(pixel.Color.B) * scale)
 			}
 		}
 	}
