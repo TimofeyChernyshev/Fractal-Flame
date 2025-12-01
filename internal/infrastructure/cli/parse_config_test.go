@@ -140,3 +140,20 @@ func (s *configSuite) TestParseGammaEqZero() {
 
 	_ = s.wrongConfigFile.Close()
 }
+
+func (s *configSuite) TestAffines() {
+	cfg := domain.Args{
+		AffineParams: []domain.AffineParam{{A: 0, B: 0, C: 0, D: 0, E: 0, F: 0}, {A: 1, B: 1, C: 1, D: 1, E: 1, F: 1}},
+	}
+	s.SetConfigContent(cfg)
+
+	args := &domain.Args{}
+
+	s.Run("must skip param with all zeros", func() {
+		err := s.app.readConfig(s.wrongConfigFile.Name(), &cli.Command{}, args)
+		s.Require().NoError(err)
+		s.Require().Equal([]domain.AffineParam{{A: 1, B: 1, C: 1, D: 1, E: 1, F: 1}}, args.AffineParams)
+	})
+
+	_ = s.wrongConfigFile.Close()
+}

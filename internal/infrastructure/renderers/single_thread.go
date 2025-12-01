@@ -23,7 +23,7 @@ func NewSingleThreadRenderer(rndGen RandomGenerator) *SingleThreadRenderer {
 func (r *SingleThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
 	seed := int64(math.Float64bits(args.Seed))
 	rnd := r.rndGen.New(seed)
-	colors := domain.RandomColors(rnd, len(args.Functions))
+	colors := domain.RandomColors(rnd, len(args.AffineParams))
 
 	fractalImage := domain.NewFractalImage(args.Size.Width, args.Size.Height)
 

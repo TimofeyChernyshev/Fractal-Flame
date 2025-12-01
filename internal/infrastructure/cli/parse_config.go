@@ -32,7 +32,6 @@ func (a *App) readConfig(configPath string, c *cli.Command, args *domain.Args) e
 		{"iteration-count", cfg.IterationCount, func(v interface{}) error { return validateIterationCount(v.(int)) }},
 		{"output-path", cfg.OutputPath, func(v interface{}) error { return validateOutput(v.(string)) }},
 		{"threads", cfg.Threads, func(v interface{}) error { return validateThreads(v.(int)) }},
-		{"affine-params", cfg.AffineParams, nil},
 		{"gamma-correction", cfg.GammaCorrection, nil},
 		{"gamma", cfg.Gamma, func(v interface{}) error { return validateGamma(v.(float64)) }},
 	}
@@ -64,6 +63,15 @@ func (a *App) readConfig(configPath string, c *cli.Command, args *domain.Args) e
 		}
 		args.Functions = cfg.Functions
 	}
+	if !c.IsSet("affine-params") && len(cfg.AffineParams) > 0 {
+		var affineParams []domain.AffineParam
+		for _, p := range cfg.AffineParams {
+			if !isZero(p) {
+				affineParams = append(affineParams, p)
+			}
+		}
+		args.AffineParams = affineParams
+	}
 
 	return nil
 }
@@ -83,8 +91,6 @@ func setFieldValue(args *domain.Args, field string, value interface{}) {
 		args.OutputPath = value.(string)
 	case "threads":
 		args.Threads = value.(int)
-	case "affine-params":
-		args.AffineParams = value.(domain.AffineParam)
 	case "gamma-correction":
 		args.GammaCorrection = value.(bool)
 	case "gamma":

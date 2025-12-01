@@ -24,7 +24,7 @@ func NewMultiThreadRenderer(rnd RandomGenerator) *MultiThreadRenderer {
 func (r *MultiThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
 	baseSeed := int64(math.Float64bits(args.Seed))
 	rnd := r.rndGen.New(baseSeed)
-	colors := domain.RandomColors(rnd, len(args.Functions))
+	colors := domain.RandomColors(rnd, len(args.AffineParams))
 
 	var totalFuncWeight float64
 	for _, f := range args.Functions {

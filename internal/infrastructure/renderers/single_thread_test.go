@@ -24,9 +24,8 @@ func TestSingleThreadRenderer_Render(t *testing.T) {
 			{Name: domain.Transformations("swirl"), Weight: 1.0},
 		},
 		Seed: 0.0,
-		AffineParams: domain.AffineParam{
-			A: 1, B: 0, C: 0,
-			D: 1, E: 0, F: 0,
+		AffineParams: []domain.AffineParam{
+			{A: 1, B: 0, C: 0, D: 1, E: 0, F: 0},
 		},
 	}
 
@@ -41,8 +40,10 @@ func TestSingleThreadRenderer_Render(t *testing.T) {
 	// point := r.rect.RandomPoint(rnd)
 	mockRnd.EXPECT().Float64().Return(0.5).Times(2) // X, Y
 
-	// getWeightedFunctionIndex(r.rnd, totalFuncWeight, args.Functions)
 	const calls = shift + iterPerPoint
+	// affineIndex := rnd.Intn(len(args.AffineParams))
+	mockRnd.EXPECT().Intn(len(args.AffineParams)).Return(0).Times(calls)
+	// getWeightedFunctionIndex(r.rnd, totalFuncWeight, args.Functions)
 	mockRnd.EXPECT().Float64().Return(0.0).Times(calls)
 
 	renderer := NewSingleThreadRenderer(mockRndGen)

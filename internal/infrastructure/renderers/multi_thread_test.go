@@ -27,9 +27,8 @@ func TestMultiThreadRenderer_Render(t *testing.T) {
 		Functions: []domain.Function{
 			{Name: domain.Transformations("swirl"), Weight: 1.0},
 		},
-		AffineParams: domain.AffineParam{
-			A: 1, B: 0, C: 0,
-			D: 1, E: 0, F: 0,
+		AffineParams: []domain.AffineParam{
+			{A: 1, B: 0, C: 0, D: 1, E: 0, F: 0},
 		},
 	}
 
@@ -49,8 +48,11 @@ func TestMultiThreadRenderer_Render(t *testing.T) {
 	mockRndThread1.EXPECT().Float64().Return(0.5).Times(2)
 	mockRndThread2.EXPECT().Float64().Return(0.5).Times(2)
 
-	// getWeightedFunctionIndex(r.rnd, totalFuncWeight, args.Functions)
 	const calls = shift + iterPerPoint
+	// affineIndex := rnd.Intn(len(args.AffineParams))
+	mockRndThread1.EXPECT().Intn(len(args.AffineParams)).Return(0).Times(calls)
+	mockRndThread2.EXPECT().Intn(len(args.AffineParams)).Return(0).Times(calls)
+	// getWeightedFunctionIndex(r.rnd, totalFuncWeight, args.Functions)
 	mockRndThread1.EXPECT().Float64().Return(0.0).Times(calls)
 	mockRndThread2.EXPECT().Float64().Return(0.0).Times(calls)
 

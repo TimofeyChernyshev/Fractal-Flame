@@ -65,7 +65,7 @@ func validateThreads(t int) error {
 }
 
 func validateAffineParams(ap []float64) error {
-	if len(ap) != 6 {
+	if len(ap)%6 != 0 {
 		return fmt.Errorf("%w: %d", errAffineParams, len(ap))
 	}
 	return nil

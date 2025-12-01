@@ -40,11 +40,11 @@ func renderIterations(
 		point := rect.RandomPoint(rnd)
 
 		for j := 0; j < shift+iterPerPoint; j++ {
-			point = domain.AffineTransform(point, args.AffineParams)
+			affineIndex := rnd.Intn(len(args.AffineParams))
+			point = domain.AffineTransform(point, args.AffineParams[affineIndex])
+			functionColor := colors[affineIndex]
 
 			index := getWeightedFunctionIndex(rnd, totalFuncWeight, args.Functions)
-			functionColor := colors[index]
-
 			transformation, _ := args.Functions[index].Name.GetTransformation()
 			point = transformation(point)
 

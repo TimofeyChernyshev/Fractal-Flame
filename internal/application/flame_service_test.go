@@ -50,9 +50,7 @@ func (s *serviceSuite) SetupSuite() {
 			{Name: domain.Swirl, Weight: 0.5},
 			{Name: domain.Horseshoe, Weight: 0.2},
 		},
-		AffineParams: domain.AffineParam{
-			A: 2, B: 2, C: 2, D: 2, E: 2, F: 2,
-		},
+		AffineParams: []domain.AffineParam{{A: 2, B: 2, C: 2, D: 2, E: 2, F: 2}},
 	}
 
 	s.image = domain.NewFractalImage(999, 999)

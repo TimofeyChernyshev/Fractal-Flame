@@ -19,9 +19,8 @@ func createArgs(iterations, threads int) *domain.Args {
 			{Name: domain.Sinusoidal, Weight: 1.0},
 			{Name: domain.Spherical, Weight: 1.0},
 		},
-		AffineParams: domain.AffineParam{
-			A: 0.5, B: 0.5, C: 0.5,
-			D: 0.5, E: 0.5, F: 0.5,
+		AffineParams: []domain.AffineParam{
+			{A: 0.5, B: 0.5, C: 0.5, D: 0.5, E: 0.5, F: 0.5},
 		},
 	}
 }

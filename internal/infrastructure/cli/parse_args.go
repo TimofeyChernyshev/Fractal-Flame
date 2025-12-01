@@ -9,6 +9,8 @@ import (
 // в порядке консольный ввод, файл конфигурации, дефолтные значения
 func (a *App) parseArgs(c *cli.Command) (*domain.Args, error) {
 	affine := c.Float64Slice("affine-params")
+	// 6 - количество аффинных параметров в одной группе параметров
+	affineParamsCount := len(affine) / 6
 
 	args := &domain.Args{
 		Size: domain.Size{
@@ -19,10 +21,15 @@ func (a *App) parseArgs(c *cli.Command) (*domain.Args, error) {
 		IterationCount:  c.Int("iteration-count"),
 		OutputPath:      c.String("output-path"),
 		Threads:         c.Int("threads"),
-		AffineParams:    domain.AffineParam{A: affine[0], B: affine[1], C: affine[2], D: affine[3], E: affine[4], F: affine[5]},
 		Functions:       parseFunctions(c.StringSlice("functions")),
 		GammaCorrection: c.Bool("gamma-correction"),
 		Gamma:           c.Float64("gamma"),
+	}
+
+	args.AffineParams = make([]domain.AffineParam, affineParamsCount)
+	for i := range affineParamsCount {
+		A, B, C, D, E, F := affine[i*6], affine[i*6+1], affine[i*6+2], affine[i*6+3], affine[i*6+4], affine[i*6+5]
+		args.AffineParams[i] = domain.AffineParam{A: A, B: B, C: C, D: D, E: E, F: F}
 	}
 
 	if c.IsSet("gamma") && !c.IsSet("gamma-correction") {
