@@ -30,6 +30,7 @@ func TestMultiThreadRenderer_Render(t *testing.T) {
 		AffineParams: []domain.AffineParam{
 			{A: 1, B: 0, C: 0, D: 1, E: 0, F: 0},
 		},
+		SymmetryLevel: 1,
 	}
 
 	baseSeed := int64(math.Float64bits(args.Seed))
