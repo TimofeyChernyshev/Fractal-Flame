@@ -1,6 +1,7 @@
 package renderers
 
 import (
+	"log/slog"
 	"math"
 
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
@@ -20,7 +21,9 @@ func NewSingleThreadRenderer(rndGen RandomGenerator) *SingleThreadRenderer {
 	}
 }
 
-func (r *SingleThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
+func (r *SingleThreadRenderer) Render(args *domain.Args, logger *slog.Logger) *domain.FractalImage {
+	logger.Info("Starting single thread renderer")
+
 	seed := int64(math.Float64bits(args.Seed))
 	rnd := r.rndGen.New(seed)
 	colors := domain.RandomColors(rnd, len(args.AffineParams))
@@ -32,7 +35,7 @@ func (r *SingleThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
 		totalFuncWeight += f.Weight
 	}
 
-	renderIterations(r.rect, args, colors, totalFuncWeight, fractalImage, rnd, 0, args.IterationCount)
+	renderIterations(r.rect, args, colors, totalFuncWeight, fractalImage, rnd, args.IterationCount)
 
 	if args.GammaCorrection {
 		gammaCorrection(fractalImage, args.Gamma)

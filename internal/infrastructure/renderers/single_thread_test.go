@@ -1,6 +1,8 @@
 package renderers
 
 import (
+	"bytes"
+	"log/slog"
 	"math"
 	"testing"
 
@@ -16,6 +18,9 @@ func TestSingleThreadRenderer_Render(t *testing.T) {
 
 	mockRnd := random.NewMockRandom(ctrl)
 	mockRndGen := NewMockRandomGenerator(ctrl)
+
+	logBuffer := &bytes.Buffer{}
+	logger := slog.New(slog.NewTextHandler(logBuffer, &slog.HandlerOptions{Level: slog.LevelError}))
 
 	args := &domain.Args{
 		Size:           domain.Size{Width: 5, Height: 5},
@@ -49,7 +54,7 @@ func TestSingleThreadRenderer_Render(t *testing.T) {
 
 	renderer := NewSingleThreadRenderer(mockRndGen)
 
-	img := renderer.Render(args)
+	img := renderer.Render(args, logger)
 
 	require.NotNil(t, img)
 

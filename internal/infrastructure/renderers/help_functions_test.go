@@ -247,7 +247,7 @@ func TestRenderIterations(t *testing.T) {
 		mockRnd.EXPECT().Float64().Return(0.0).Times(shift + iterPerPoint)
 
 		renderIterations(rect, args, colors, totalFuncWeight,
-			image, mockRnd, 0, 1)
+			image, mockRnd, 1)
 
 		// Точка (0,0) при symmetry=2 даст (0,0) и поворот на 180° (0,0)
 		centerPixel, _ := image.GetPixel(5, 5) // Центр изображения

@@ -35,10 +35,9 @@ func renderIterations(
 	totalFuncWeight float64,
 	image *domain.FractalImage,
 	rnd random.Random,
-	startIter int,
-	endIter int,
+	iters int,
 ) {
-	for iter := startIter; iter < endIter; iter++ {
+	for range iters {
 		point := rect.RandomPoint(rnd)
 
 		for j := 0; j < shift+iterPerPoint; j++ {

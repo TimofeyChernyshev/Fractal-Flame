@@ -1,6 +1,7 @@
 package renderers
 
 import (
+	"log/slog"
 	"math"
 	"sync"
 
@@ -21,7 +22,9 @@ func NewMultiThreadRenderer(rnd RandomGenerator) *MultiThreadRenderer {
 	}
 }
 
-func (r *MultiThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
+func (r *MultiThreadRenderer) Render(args *domain.Args, logger *slog.Logger) *domain.FractalImage {
+	logger.Info("Starting multi thread rendering", "threads", args.Threads)
+
 	baseSeed := int64(math.Float64bits(args.Seed))
 	rnd := r.rndGen.New(baseSeed)
 	colors := domain.RandomColors(rnd, len(args.AffineParams))
@@ -33,7 +36,6 @@ func (r *MultiThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
 
 	threads := args.Threads
 	iterationsPerThread := args.IterationCount / threads
-
 	results := make(chan *domain.FractalImage, threads)
 	var wg sync.WaitGroup
 
@@ -56,7 +58,9 @@ func (r *MultiThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
 				endIter = args.IterationCount
 			}
 
-			renderIterations(r.rect, args, colors, totalFuncWeight, workerImage, localRnd, startIter, endIter)
+			iterCount := endIter - startIter
+
+			renderIterations(r.rect, args, colors, totalFuncWeight, workerImage, localRnd, iterCount)
 
 			results <- workerImage
 		}(i + 1)

@@ -63,7 +63,7 @@ func (s *serviceSuite) TearDownSuite() {
 func (s *serviceSuite) TestParseArgs() {
 	s.Run("No errors", func() {
 		s.chooser.EXPECT().Choose(s.args.Threads).Return(s.renderer)
-		s.renderer.EXPECT().Render(s.args).Return(s.image)
+		s.renderer.EXPECT().Render(s.args, s.service.logger).Return(s.image)
 		s.saver.EXPECT().Save(s.image, "cfg.png").Return(nil)
 
 		err := s.service.RenderFlame(s.args)
@@ -74,7 +74,7 @@ func (s *serviceSuite) TestParseArgs() {
 func (s *serviceSuite) TestSaverReturnErr() {
 	s.Run("saver return error", func() {
 		s.chooser.EXPECT().Choose(s.args.Threads).Return(s.renderer)
-		s.renderer.EXPECT().Render(s.args).Return(s.image)
+		s.renderer.EXPECT().Render(s.args, s.service.logger).Return(s.image)
 		s.saver.EXPECT().Save(s.image, "cfg.png").Return(fmt.Errorf("some error"))
 
 		err := s.service.RenderFlame(s.args)

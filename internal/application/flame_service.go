@@ -23,7 +23,7 @@ func (s *FlameService) RenderFlame(args *domain.Args) error {
 	renderer := s.rendererChooser.Choose(args.Threads)
 	s.logger.Debug("Renderer choosed successfully")
 
-	image := renderer.Render(args)
+	image := renderer.Render(args, s.logger)
 	s.logger.Debug("Image rendered")
 
 	err := s.saver.Save(image, args.OutputPath)
