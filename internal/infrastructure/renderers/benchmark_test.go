@@ -1,6 +1,8 @@
 package renderers
 
 import (
+	"bytes"
+	"log/slog"
 	"strconv"
 	"testing"
 
@@ -37,6 +39,9 @@ func BenchmarkRenderers(b *testing.B) {
 		{"100k", 100_000, 1}, {"100k", 100_000, 2}, {"100k", 100_000, 4}, {"100k", 100_000, 8},
 	}
 
+	logBuffer := &bytes.Buffer{}
+	logger := slog.New(slog.NewTextHandler(logBuffer, &slog.HandlerOptions{Level: slog.LevelError}))
+
 	for _, tc := range testCases {
 		b.Run(tc.name+"_Thread_"+strconv.Itoa(tc.threads), func(b *testing.B) {
 			args := createArgs(tc.iterations, tc.threads)
@@ -45,8 +50,9 @@ func BenchmarkRenderers(b *testing.B) {
 
 			for i := 0; i < b.N; i++ {
 				rnd := random_generator.NewGenerator()
-				renderer := NewMultiThreadRenderer(rnd)
-				renderer.Render(args)
+				ch := NewChooser(rnd)
+				renderer := ch.Choose(tc.threads)
+				renderer.Render(args, logger)
 			}
 		})
 	}
