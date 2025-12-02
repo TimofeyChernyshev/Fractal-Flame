@@ -216,3 +216,42 @@ func TestGammaCorrection(t *testing.T) {
 	}
 
 }
+
+func TestRenderIterations(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	t.Run("symmetry=2, creates 2 points", func(t *testing.T) {
+		mockRnd := random.NewMockRandom(ctrl)
+
+		args := &domain.Args{
+			Functions: []domain.Function{
+				{Name: domain.Swirl, Weight: 1.0},
+			},
+			AffineParams: []domain.AffineParam{
+				{A: 1, B: 0, C: 0, D: 1, E: 0, F: 0},
+			},
+			SymmetryLevel: 2,
+		}
+
+		rect := domain.NewRectangle(-1, -1, 2, 2)
+		colors := []domain.Color{{R: 255, G: 0, B: 0}}
+		image := domain.NewFractalImage(10, 10)
+		totalFuncWeight := 1.0
+
+		// RandomPoint
+		mockRnd.EXPECT().Float64().Return(0.0).Times(2) // Точка (0,0)
+
+		// Аффинные параметры и выбор функции
+		mockRnd.EXPECT().Intn(1).Return(0).Times(shift + iterPerPoint)
+		mockRnd.EXPECT().Float64().Return(0.0).Times(shift + iterPerPoint)
+
+		renderIterations(rect, args, colors, totalFuncWeight,
+			image, mockRnd, 0, 1)
+
+		// Точка (0,0) при symmetry=2 даст (0,0) и поворот на 180° (0,0)
+		centerPixel, _ := image.GetPixel(5, 5) // Центр изображения
+		// При symmetry=2 hitCount должен быть минимум 2
+		require.GreaterOrEqual(t, centerPixel.HitCount, uint32(2))
+	})
+}

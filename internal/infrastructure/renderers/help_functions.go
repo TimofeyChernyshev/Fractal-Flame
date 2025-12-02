@@ -44,15 +44,25 @@ func renderIterations(
 		for j := 0; j < shift+iterPerPoint; j++ {
 			affineIndex := rnd.Intn(len(args.AffineParams))
 			point = domain.AffineTransform(point, args.AffineParams[affineIndex])
-			functionColor := colors[affineIndex]
+			affineParamColor := colors[affineIndex]
 
 			index := getWeightedFunctionIndex(rnd, totalFuncWeight, args.Functions)
 			transformation, _ := args.Functions[index].Name.GetTransformation()
 			point = transformation(point)
 
-			if j >= shift && rect.Contains(point) {
-				if pixel, ok := mapPoint(point, image, rect); ok {
-					pixel.ColorPixel(functionColor)
+			if j >= shift {
+				theta := 0.0
+
+				for range args.SymmetryLevel {
+					rotated := domain.Rotate(point, theta)
+
+					if rect.Contains(rotated) {
+						if pixel, ok := mapPoint(rotated, image, rect); ok {
+							pixel.ColorPixel(affineParamColor)
+						}
+					}
+
+					theta += (2 * math.Pi) / float64(args.SymmetryLevel)
 				}
 			}
 		}
