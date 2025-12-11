@@ -17,13 +17,14 @@ func main() {
 	randomGen := random_generator.NewGenerator()
 
 	logger := NewLogger()
+	slog.SetDefault(logger)
 
 	saver := saver.NewPngSaver()
 	chooser := renderers.NewChooser(randomGen)
 
-	flameService := application.NewFlameService(saver, chooser, logger)
+	flameService := application.NewFlameService(saver, chooser)
 
-	app := cli.NewApp(flameService, logger)
+	app := cli.NewApp(flameService)
 
 	err := app.Run(context.Background(), os.Args)
 	if err != nil {

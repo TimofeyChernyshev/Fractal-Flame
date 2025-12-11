@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"log/slog"
+
 	"github.com/urfave/cli/v3"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
 )
@@ -40,11 +42,11 @@ func (a *App) parseArgs(c *cli.Command) (*domain.Args, error) {
 	if c.IsSet("config") {
 		configPath := c.String("config")
 
-		a.logger.Debug("Reading config", "path", configPath)
+		slog.Debug("Reading config", "path", configPath)
 
 		err := a.readConfig(configPath, c, args)
 		if err != nil {
-			a.logger.Error("Failed to read config", "error", err)
+			slog.Error("Failed to read config", "error", err)
 			return nil, err
 		}
 	}

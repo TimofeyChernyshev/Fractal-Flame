@@ -1,8 +1,6 @@
 package renderers
 
 import (
-	"bytes"
-	"log/slog"
 	"math"
 	"testing"
 
@@ -20,9 +18,6 @@ func TestMultiThreadRenderer_Render(t *testing.T) {
 	mockRndGen := NewMockRandomGenerator(ctrl)
 	mockRndThread1 := random.NewMockRandom(ctrl)
 	mockRndThread2 := random.NewMockRandom(ctrl)
-
-	logBuffer := &bytes.Buffer{}
-	logger := slog.New(slog.NewTextHandler(logBuffer, &slog.HandlerOptions{Level: slog.LevelError}))
 
 	args := &domain.Args{
 		Size:           domain.Size{Width: 5, Height: 5},
@@ -64,7 +59,7 @@ func TestMultiThreadRenderer_Render(t *testing.T) {
 
 	renderer := NewMultiThreadRenderer(mockRndGen)
 
-	img := renderer.Render(args, logger)
+	img := renderer.Render(args)
 	require.NotNil(t, img)
 
 	coloredPixels := 0

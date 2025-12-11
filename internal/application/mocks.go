@@ -5,7 +5,6 @@
 package application
 
 import (
-	slog "log/slog"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -36,17 +35,17 @@ func (m *MockRenderer) EXPECT() *MockRendererMockRecorder {
 }
 
 // Render mocks base method.
-func (m *MockRenderer) Render(args *domain.Args, logger *slog.Logger) *domain.FractalImage {
+func (m *MockRenderer) Render(args *domain.Args) *domain.FractalImage {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Render", args, logger)
+	ret := m.ctrl.Call(m, "Render", args)
 	ret0, _ := ret[0].(*domain.FractalImage)
 	return ret0
 }
 
 // Render indicates an expected call of Render.
-func (mr *MockRendererMockRecorder) Render(args, logger interface{}) *gomock.Call {
+func (mr *MockRendererMockRecorder) Render(args interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Render", reflect.TypeOf((*MockRenderer)(nil).Render), args, logger)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Render", reflect.TypeOf((*MockRenderer)(nil).Render), args)
 }
 
 // MockSaver is a mock of Saver interface.

@@ -8,31 +8,30 @@ import (
 
 // FlameService представляет основной сервис приложения
 type FlameService struct {
-	logger          *slog.Logger
 	saver           Saver
 	rendererChooser Chooser
 }
 
 // NewFlameService возвращает новый экземпляр FlameService
-func NewFlameService(s Saver, rc Chooser, l *slog.Logger) *FlameService {
-	return &FlameService{saver: s, rendererChooser: rc, logger: l}
+func NewFlameService(s Saver, rc Chooser) *FlameService {
+	return &FlameService{saver: s, rendererChooser: rc}
 }
 
 // RenderFlame создает и сохраняет фрактальное пламя
 func (s *FlameService) RenderFlame(args *domain.Args) error {
 	renderer := s.rendererChooser.Choose(args.Threads)
-	s.logger.Debug("Renderer choosed successfully")
+	slog.Debug("Renderer choosed successfully")
 
-	image := renderer.Render(args, s.logger)
-	s.logger.Debug("Image rendered")
+	image := renderer.Render(args)
+	slog.Debug("Image rendered")
 
 	err := s.saver.Save(image, args.OutputPath)
 	if err != nil {
-		s.logger.Error("Saving image failed", "path", args.OutputPath, "error", err)
+		slog.Error("Saving image failed", "path", args.OutputPath, "error", err)
 		return err
 	}
-	s.logger.Debug("Image saved", "path", args.OutputPath)
+	slog.Debug("Image saved", "path", args.OutputPath)
 
-	s.logger.Debug("Flame rendered and saved successfully")
+	slog.Debug("Flame rendered and saved successfully")
 	return nil
 }

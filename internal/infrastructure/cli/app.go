@@ -14,16 +14,15 @@ type FlameService interface {
 
 type App struct {
 	FlameService FlameService
-	logger       *slog.Logger
 }
 
-func NewApp(s FlameService, l *slog.Logger) *App {
-	return &App{FlameService: s, logger: l}
+func NewApp(s FlameService) *App {
+	return &App{FlameService: s}
 }
 
 // Run парсит аргументы командной строки и запускает само приложение
 func (a *App) Run(ctx context.Context, args []string) error {
-	a.logger.Info("Starting fractal-flame CLI", "args", args[1:])
+	slog.Info("Starting fractal-flame CLI", "args", args[1:])
 
 	app := &cli.Command{
 		Name:     "fractal-flame",
@@ -117,33 +116,33 @@ func (a *App) Run(ctx context.Context, args []string) error {
 
 	err := app.Run(ctx, args)
 	if err != nil {
-		a.logger.Error("Run application failed", "error", err)
+		slog.Error("Run application failed", "error", err)
 		return err
 	}
 
-	a.logger.Info("Application finished")
+	slog.Info("Application finished")
 	return nil
 }
 
 // runApp запускает основной сервис приложения
 func (a *App) runApp(_ context.Context, c *cli.Command) error {
-	a.logger.Info("Parsing CLI arguments")
+	slog.Info("Parsing CLI arguments")
 
 	args, err := a.parseArgs(c)
 	if err != nil {
-		a.logger.Error("Failed to parse args", "error", err)
+		slog.Error("Failed to parse args", "error", err)
 		return err
 	}
-	a.logger.Info("Parsing CLI arguments finished successfully", "args", args)
+	slog.Info("Parsing CLI arguments finished successfully", "args", args)
 
-	a.logger.Info("Starting flame generation")
+	slog.Info("Starting flame generation")
 
 	err = a.FlameService.RenderFlame(args)
 	if err != nil {
-		a.logger.Error("Failed to generate flame", "error", err)
+		slog.Error("Failed to generate flame", "error", err)
 		return err
 	}
-	a.logger.Info("Flame generated successfully")
+	slog.Info("Flame generated successfully")
 
 	return nil
 }

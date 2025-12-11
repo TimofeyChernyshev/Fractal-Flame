@@ -1,10 +1,7 @@
 package cli
 
 import (
-	"bytes"
 	"encoding/json"
-	"io"
-	"log/slog"
 	"os"
 	"testing"
 
@@ -17,7 +14,6 @@ type configSuite struct {
 	suite.Suite
 	app             *App
 	wrongConfigFile *os.File
-	logBuffer       io.Writer
 }
 
 func TestRunConfigSuite(t *testing.T) {
@@ -25,9 +21,7 @@ func TestRunConfigSuite(t *testing.T) {
 }
 
 func (s *configSuite) SetupTest() {
-	s.logBuffer = &bytes.Buffer{}
-	logger := slog.New(slog.NewTextHandler(s.logBuffer, &slog.HandlerOptions{Level: slog.LevelError}))
-	s.app = NewApp(nil, logger)
+	s.app = NewApp(nil)
 
 	tempDir := s.T().TempDir()
 	var err error

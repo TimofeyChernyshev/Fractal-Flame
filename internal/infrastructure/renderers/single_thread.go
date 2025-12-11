@@ -21,8 +21,8 @@ func NewSingleThreadRenderer(rndGen RandomGenerator) *SingleThreadRenderer {
 	}
 }
 
-func (r *SingleThreadRenderer) Render(args *domain.Args, logger *slog.Logger) *domain.FractalImage {
-	logger.Info("Starting single thread renderer")
+func (r *SingleThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
+	slog.Info("Starting single thread renderer")
 
 	seed := int64(math.Float64bits(args.Seed))
 	rnd := r.rndGen.New(seed)

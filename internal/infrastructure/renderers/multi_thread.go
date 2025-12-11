@@ -22,8 +22,8 @@ func NewMultiThreadRenderer(rnd RandomGenerator) *MultiThreadRenderer {
 	}
 }
 
-func (r *MultiThreadRenderer) Render(args *domain.Args, logger *slog.Logger) *domain.FractalImage {
-	logger.Info("Starting multi thread rendering", "threads", args.Threads)
+func (r *MultiThreadRenderer) Render(args *domain.Args) *domain.FractalImage {
+	slog.Info("Starting multi thread rendering", "threads", args.Threads)
 
 	baseSeed := int64(math.Float64bits(args.Seed))
 	rnd := r.rndGen.New(baseSeed)

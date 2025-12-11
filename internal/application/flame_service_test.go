@@ -1,10 +1,7 @@
 package application
 
 import (
-	"bytes"
 	"fmt"
-	"io"
-	"log/slog"
 	"testing"
 
 	gomock "github.com/golang/mock/gomock"
@@ -19,10 +16,9 @@ type serviceSuite struct {
 	chooser  *MockChooser
 	ctrl     *gomock.Controller
 
-	service   *FlameService
-	logBuffer io.Writer
-	args      *domain.Args
-	image     *domain.FractalImage
+	service *FlameService
+	args    *domain.Args
+	image   *domain.FractalImage
 }
 
 func TestRunAppSuite(t *testing.T) {
@@ -35,10 +31,7 @@ func (s *serviceSuite) SetupSuite() {
 	s.renderer = NewMockRenderer(s.ctrl)
 	s.chooser = NewMockChooser(s.ctrl)
 
-	s.logBuffer = &bytes.Buffer{}
-	logger := slog.New(slog.NewTextHandler(s.logBuffer, &slog.HandlerOptions{Level: slog.LevelError}))
-
-	s.service = NewFlameService(s.saver, s.chooser, logger)
+	s.service = NewFlameService(s.saver, s.chooser)
 
 	s.args = &domain.Args{
 		Size:           domain.Size{Height: 999, Width: 999},
@@ -63,7 +56,7 @@ func (s *serviceSuite) TearDownSuite() {
 func (s *serviceSuite) TestParseArgs() {
 	s.Run("No errors", func() {
 		s.chooser.EXPECT().Choose(s.args.Threads).Return(s.renderer)
-		s.renderer.EXPECT().Render(s.args, s.service.logger).Return(s.image)
+		s.renderer.EXPECT().Render(s.args).Return(s.image)
 		s.saver.EXPECT().Save(s.image, "cfg.png").Return(nil)
 
 		err := s.service.RenderFlame(s.args)
@@ -74,7 +67,7 @@ func (s *serviceSuite) TestParseArgs() {
 func (s *serviceSuite) TestSaverReturnErr() {
 	s.Run("saver return error", func() {
 		s.chooser.EXPECT().Choose(s.args.Threads).Return(s.renderer)
-		s.renderer.EXPECT().Render(s.args, s.service.logger).Return(s.image)
+		s.renderer.EXPECT().Render(s.args).Return(s.image)
 		s.saver.EXPECT().Save(s.image, "cfg.png").Return(fmt.Errorf("some error"))
 
 		err := s.service.RenderFlame(s.args)
