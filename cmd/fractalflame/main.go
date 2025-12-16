@@ -20,9 +20,9 @@ func main() {
 	slog.SetDefault(logger)
 
 	saver := saver.NewPngSaver()
-	chooser := renderers.NewChooser(randomGen)
+	renderer := renderers.NewRenderer(randomGen)
 
-	flameService := application.NewFlameService(saver, chooser)
+	flameService := application.NewFlameService(saver, renderer)
 
 	app := cli.NewApp(flameService)
 

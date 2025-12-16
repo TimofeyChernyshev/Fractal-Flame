@@ -13,7 +13,6 @@ type serviceSuite struct {
 	suite.Suite
 	saver    *MockSaver
 	renderer *MockRenderer
-	chooser  *MockChooser
 	ctrl     *gomock.Controller
 
 	service *FlameService
@@ -29,9 +28,8 @@ func (s *serviceSuite) SetupSuite() {
 	s.ctrl = gomock.NewController(s.T())
 	s.saver = NewMockSaver(s.ctrl)
 	s.renderer = NewMockRenderer(s.ctrl)
-	s.chooser = NewMockChooser(s.ctrl)
 
-	s.service = NewFlameService(s.saver, s.chooser)
+	s.service = NewFlameService(s.saver, s.renderer)
 
 	s.args = &domain.Args{
 		Size:           domain.Size{Height: 999, Width: 999},
@@ -55,7 +53,6 @@ func (s *serviceSuite) TearDownSuite() {
 
 func (s *serviceSuite) TestParseArgs() {
 	s.Run("No errors", func() {
-		s.chooser.EXPECT().Choose(s.args.Threads).Return(s.renderer)
 		s.renderer.EXPECT().Render(s.args).Return(s.image)
 		s.saver.EXPECT().Save(s.image, "cfg.png").Return(nil)
 
@@ -66,7 +63,6 @@ func (s *serviceSuite) TestParseArgs() {
 
 func (s *serviceSuite) TestSaverReturnErr() {
 	s.Run("saver return error", func() {
-		s.chooser.EXPECT().Choose(s.args.Threads).Return(s.renderer)
 		s.renderer.EXPECT().Render(s.args).Return(s.image)
 		s.saver.EXPECT().Save(s.image, "cfg.png").Return(fmt.Errorf("some error"))
 

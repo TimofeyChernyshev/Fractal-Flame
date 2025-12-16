@@ -1,6 +1,7 @@
 package renderers
 
 import (
+	"log/slog"
 	"strconv"
 	"testing"
 
@@ -39,14 +40,17 @@ func BenchmarkRenderers(b *testing.B) {
 
 	for _, tc := range testCases {
 		b.Run(tc.name+"_Thread_"+strconv.Itoa(tc.threads), func(b *testing.B) {
+			logger := slog.Default()
+			defer slog.SetDefault(logger)
+			slog.SetDefault(slog.New(slog.DiscardHandler))
+
 			args := createArgs(tc.iterations, tc.threads)
 
 			b.ResetTimer()
 
 			for i := 0; i < b.N; i++ {
 				rnd := random_generator.NewGenerator()
-				ch := NewChooser(rnd)
-				renderer := ch.Choose(tc.threads)
+				renderer := NewRenderer(rnd)
 				renderer.Render(args)
 			}
 		})

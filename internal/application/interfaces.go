@@ -11,7 +11,3 @@ type Renderer interface {
 type Saver interface {
 	Save(fractalImage *domain.FractalImage, path string) error
 }
-
-type Chooser interface {
-	Choose(threads int) Renderer
-}
