@@ -83,7 +83,7 @@ func (r *Renderer) Render(args *domain.Args) *domain.FractalImage {
 	}
 
 	if args.GammaCorrection {
-		gammaCorrection(finalImage, args.Gamma)
+		finalImage.GammaCorrection(args.Gamma)
 	}
 
 	return finalImage
