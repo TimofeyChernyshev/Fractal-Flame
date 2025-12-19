@@ -7,16 +7,40 @@ import (
 )
 
 func TestRectangleContains(t *testing.T) {
+	t.Parallel()
+
 	r := Rectangle{
 		XMin:   -1,
 		YMin:   -2,
 		Width:  1,
 		Height: 2,
 	}
+	tests := []struct {
+		name     string
+		point    Point
+		contains bool
+	}{
+		{
+			name:     "point in rectangle",
+			point:    Point{0, 0},
+			contains: true,
+		},
+		{
+			name:     "point on the vertex",
+			point:    Point{-1, -2},
+			contains: true,
+		},
+		{
+			name:     "point out of rectangle",
+			point:    Point{2, 0},
+			contains: false,
+		},
+	}
 
-	require.True(t, r.Contains(Point{0, 0}))
-	require.True(t, r.Contains(Point{-1, -2}))
-
-	require.False(t, r.Contains(Point{2, 0}))
-	require.False(t, r.Contains(Point{0, 3}))
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			contains := r.Contains(tt.point)
+			require.Equal(t, tt.contains, contains)
+		})
+	}
 }
