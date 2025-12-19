@@ -52,8 +52,14 @@ func validateOutput(o string) error {
 	if err != nil {
 		return fmt.Errorf("%w: cannot write file to directory '%s': %w", errWrongOutput, dir, err)
 	}
-	_ = tmpFile.Close()
-	_ = os.Remove(tmpFile.Name())
+	err = tmpFile.Close()
+	if err != nil {
+		return err
+	}
+	err = os.Remove(tmpFile.Name())
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
