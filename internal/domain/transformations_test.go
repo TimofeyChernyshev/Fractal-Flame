@@ -12,7 +12,7 @@ func TestTransformations_GetTransformation(t *testing.T) {
 
 	tests := []struct {
 		name           string
-		transformation Transformations
+		transformation Transformation
 		wantExists     bool
 	}{
 		{

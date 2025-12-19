@@ -25,7 +25,7 @@ func TestRenderer_MultiThreadsRender(t *testing.T) {
 		Threads:        2,
 		Seed:           0.0,
 		Functions: []domain.Function{
-			{Name: domain.Transformations("swirl"), Weight: 1.0},
+			{Name: domain.Transformation("swirl"), Weight: 1.0},
 		},
 		AffineParams: []domain.AffineParam{
 			{A: 1, B: 0, C: 0, D: 1, E: 0, F: 0},
@@ -87,7 +87,7 @@ func TestRenderer_SingleThreadRender(t *testing.T) {
 		Size:           domain.Size{Width: 5, Height: 5},
 		IterationCount: 1,
 		Functions: []domain.Function{
-			{Name: domain.Transformations("swirl"), Weight: 1.0},
+			{Name: domain.Transformation("swirl"), Weight: 1.0},
 		},
 		Seed: 0.0,
 		AffineParams: []domain.AffineParam{

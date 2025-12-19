@@ -53,7 +53,7 @@ func (a *App) readConfig(configPath string, c *cli.Command, args *domain.Args) e
 
 	if !c.IsSet("functions") && len(cfg.Functions) > 0 {
 		for _, f := range cfg.Functions {
-			_, ok := domain.Transformations(f.Name).GetTransformation()
+			_, ok := domain.Transformation(f.Name).GetTransformation()
 			if !ok {
 				slog.Error("Provided function isn't supported", "function", f.Name)
 				return fmt.Errorf("%w %s: %w: transformation function isn't supported", errConfigArgs, f.Name, errFunctionFormat)

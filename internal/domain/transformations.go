@@ -2,18 +2,18 @@ package domain
 
 import "math"
 
-type Transformations string
+type Transformation string
 
 const (
-	Swirl      Transformations = "swirl"
-	Horseshoe  Transformations = "horseshoe"
-	Sinusoidal Transformations = "sinusoidal"
-	Spherical  Transformations = "spherical"
-	Heart      Transformations = "heart"
-	Cosine     Transformations = "cosine"
+	Swirl      Transformation = "swirl"
+	Horseshoe  Transformation = "horseshoe"
+	Sinusoidal Transformation = "sinusoidal"
+	Spherical  Transformation = "spherical"
+	Heart      Transformation = "heart"
+	Cosine     Transformation = "cosine"
 )
 
-var AvailableTransformations = map[Transformations]TransFunc{
+var AvailableTransformation = map[Transformation]TransFunc{
 	Swirl:      swirl,
 	Horseshoe:  horseshoe,
 	Sinusoidal: sinusoidal,
@@ -22,8 +22,8 @@ var AvailableTransformations = map[Transformations]TransFunc{
 	Cosine:     cosine,
 }
 
-func (t Transformations) GetTransformation() (TransFunc, bool) {
-	fn, ok := AvailableTransformations[t]
+func (t Transformation) GetTransformation() (TransFunc, bool) {
+	fn, ok := AvailableTransformation[t]
 	return fn, ok
 }
 

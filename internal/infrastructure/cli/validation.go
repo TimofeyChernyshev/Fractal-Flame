@@ -88,7 +88,7 @@ func parseFunc(f string) (domain.Function, error) {
 		return domain.Function{}, fmt.Errorf("%w: %s", errFunctionFormat, f)
 	}
 
-	_, ok = domain.Transformations(functionStr).GetTransformation()
+	_, ok = domain.Transformation(functionStr).GetTransformation()
 	if !ok {
 		return domain.Function{}, fmt.Errorf("%w: transformation function isn't supported: %s", errFunctionFormat, functionStr)
 	}
@@ -101,7 +101,7 @@ func parseFunc(f string) (domain.Function, error) {
 		return domain.Function{}, fmt.Errorf("%w: weight must be positive number: %s", errFunctionFormat, weightStr)
 	}
 
-	return domain.Function{Name: domain.Transformations(functionStr), Weight: weight}, nil
+	return domain.Function{Name: domain.Transformation(functionStr), Weight: weight}, nil
 }
 
 func validateConfig(c string) error {

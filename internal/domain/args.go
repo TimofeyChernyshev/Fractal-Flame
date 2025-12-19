@@ -19,8 +19,8 @@ type Size struct {
 }
 
 type Function struct {
-	Name   Transformations `json:"name"`
-	Weight float64         `json:"weight"`
+	Name   Transformation `json:"name"`
+	Weight float64        `json:"weight"`
 }
 
 type AffineParam struct {
