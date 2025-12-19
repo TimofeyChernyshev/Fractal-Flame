@@ -1,6 +1,8 @@
 package saver
 
 import (
+	"image"
+	"image/color"
 	"image/png"
 	"os"
 	"path/filepath"
@@ -12,9 +14,9 @@ import (
 
 type PngSaverSuite struct {
 	suite.Suite
-	dir          string
-	saver        *PngSaver
-	fractalImage *domain.FractalImage
+	dir   string
+	saver *PngSaver
+	img   image.Image
 }
 
 func TestPngSaverSuite(t *testing.T) {
@@ -26,7 +28,7 @@ func (s *PngSaverSuite) SetupTest() {
 	s.saver = NewPngSaver()
 
 	width, height := 2, 2
-	s.fractalImage = domain.NewFractalImage(width, height)
+	fractal := domain.NewFractalImage(width, height)
 
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
@@ -35,16 +37,34 @@ func (s *PngSaverSuite) SetupTest() {
 				G: uint32(y * 100),
 				B: uint32((x + y) * 50),
 			}
-			pixel, _ := s.fractalImage.GetPixel(x, y)
+			pixel, _ := fractal.GetPixel(x, y)
 			pixel.ColorPixel(color)
 		}
 	}
+
+	img := image.NewRGBA(image.Rect(0, 0, fractal.Width, fractal.Height))
+
+	for y := range fractal.Height {
+		for x := range fractal.Width {
+			pixel, _ := fractal.GetPixel(x, y)
+			pixelColor := color.RGBA{
+				R: uint8(pixel.Color.R),
+				G: uint8(pixel.Color.G),
+				B: uint8(pixel.Color.B),
+				A: 255,
+			}
+
+			img.Set(x, y, pixelColor)
+		}
+	}
+
+	s.img = img
 }
 
 func (s *PngSaverSuite) TestSaveSuccessful() {
 	tmpPath := filepath.Join(s.dir, "success_test.png")
 
-	err := s.saver.Save(s.fractalImage, tmpPath)
+	err := s.saver.Save(s.img, tmpPath)
 	s.Require().NoError(err)
 
 	_, err = os.Stat(tmpPath)
@@ -63,15 +83,15 @@ func (s *PngSaverSuite) TestSaveSuccessful() {
 func (s *PngSaverSuite) TestSaveIncorrectPath() {
 	wrongPath := filepath.Join(s.dir, "invalid_path/pic.png")
 
-	err := s.saver.Save(s.fractalImage, wrongPath)
+	err := s.saver.Save(s.img, wrongPath)
 	s.Require().Error(err)
 }
 
 func (s *PngSaverSuite) TestSaveEmptyImage() {
 	tmpPath := filepath.Join(s.dir, "empty_test.png")
 
-	emptyImage := domain.NewFractalImage(0, 0)
+	img := image.NewRGBA(image.Rect(0, 0, 0, 0))
 
-	err := s.saver.Save(emptyImage, tmpPath)
+	err := s.saver.Save(img, tmpPath)
 	s.Require().Error(err)
 }

@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"image"
+
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
 )
 
@@ -9,5 +11,5 @@ type Renderer interface {
 }
 
 type Saver interface {
-	Save(fractalImage *domain.FractalImage, path string) error
+	Save(img image.Image, path string) error
 }
