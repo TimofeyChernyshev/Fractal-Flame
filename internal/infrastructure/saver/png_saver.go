@@ -21,9 +21,7 @@ func (s *PngSaver) Save(fractalImage *domain.FractalImage, path string) error {
 	if err != nil {
 		return err
 	}
-	defer func() {
-		_ = f.Close()
-	}()
+	defer f.Close()
 
 	img := image.NewRGBA(image.Rect(0, 0, fractalImage.Width, fractalImage.Height))
 
