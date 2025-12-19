@@ -16,7 +16,10 @@ var errConfigArgs error = errors.New("invalid value in config file")
 // readConfig считвает конфиг файл и ставит параметрам значения из него
 func (a *App) readConfig(configPath string, c *cli.Command, args *domain.Args) error {
 	var cfg domain.Args
-	data, _ := os.ReadFile(configPath)
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		return err
+	}
 	if err := json.Unmarshal(data, &cfg); err != nil {
 		slog.Error("Failed to parse config file", "error", err)
 		return fmt.Errorf("cannot parse config file: %w", err)
