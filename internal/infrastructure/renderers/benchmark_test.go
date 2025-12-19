@@ -47,10 +47,10 @@ func BenchmarkRenderers(b *testing.B) {
 			args := createArgs(tc.iterations, tc.threads)
 
 			b.ResetTimer()
+			rnd := random_generator.NewGenerator()
+			renderer := NewRenderer(rnd)
 
-			for i := 0; i < b.N; i++ {
-				rnd := random_generator.NewGenerator()
-				renderer := NewRenderer(rnd)
+			for b.Loop() {
 				renderer.Render(args)
 			}
 		})
