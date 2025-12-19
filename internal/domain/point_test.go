@@ -95,12 +95,66 @@ func TestRotate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			result := Rotate(tt.point, tt.theta)
+			result := tt.point.Rotate(tt.theta)
 
 			require.InDelta(t, tt.expected.X, result.X, 1e-9,
 				"X coordinate mismatch: expected %v, got %v", tt.expected.X, result.X)
 			require.InDelta(t, tt.expected.Y, result.Y, 1e-9,
 				"Y coordinate mismatch: expected %v, got %v", tt.expected.Y, result.Y)
+		})
+	}
+}
+
+func TestMapPoint(t *testing.T) {
+	rect := NewRectangle(-1, -1, 2, 2)
+	img := NewFractalImage(100, 100)
+
+	tests := []struct {
+		name       string
+		pointX     float64
+		pointY     float64
+		pixelX     int
+		pixelY     int
+		pixelFound bool
+	}{
+		{
+			name:   "center",
+			pointX: 0, pointY: 0,
+			pixelX: 50, pixelY: 50,
+			pixelFound: true,
+		},
+		{
+			name:   "bottom left",
+			pointX: -1, pointY: -1,
+			pixelX: 0, pixelY: 0,
+			pixelFound: true,
+		},
+		{
+			name:   "upper right",
+			pointX: 0.99, pointY: 0.99,
+			pixelX: 99, pixelY: 99,
+			pixelFound: true,
+		},
+		{
+			name:   "out of borders",
+			pointX: 5, pointY: 5,
+			pixelFound: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := NewPoint(tt.pointX, tt.pointY)
+
+			pixel, ok := p.MapPoint(img, rect)
+			require.Equal(t, tt.pixelFound, ok)
+
+			if ok {
+				expectedPixel, _ := img.GetPixel(tt.pixelX, tt.pixelY)
+				require.Equal(t, expectedPixel, pixel)
+			} else {
+				require.Nil(t, pixel)
+			}
 		})
 	}
 }

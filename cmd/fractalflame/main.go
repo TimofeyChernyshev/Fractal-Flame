@@ -6,10 +6,10 @@ import (
 	"log/slog"
 	"os"
 
-	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/application"
+	renderer "gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/application/flame_renderer"
+	usecase "gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/application/flame_usecase"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/cli"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/random_generator"
-	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/renderers"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/saver"
 )
 
@@ -20,7 +20,7 @@ func main() {
 	slog.SetDefault(logger)
 
 	saver := saver.NewPngSaver()
-	renderer := renderers.NewRenderer(randomGen)
+	renderer := renderer.NewRenderer(randomGen)
 
 	flameService := usecase.NewFlameService(saver, renderer)
 

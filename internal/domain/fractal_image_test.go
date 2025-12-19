@@ -3,7 +3,9 @@ package domain
 import (
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
+	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/pkg/random"
 )
 
 func TestFractalImageGetPixel(t *testing.T) {
@@ -183,5 +185,94 @@ func TestGammaCorrection(t *testing.T) {
 			}
 		})
 	}
+}
 
+func TestAffineTransform(t *testing.T) {
+	p := Point{X: 1, Y: 2}
+	params := AffineParam{
+		A: 1,
+		B: 2,
+		C: 3,
+		D: 4,
+		E: 5,
+		F: 6,
+	}
+
+	result := affineTransform(p, params)
+
+	require.InDelta(t, result.X, 1*1+2*2+3, 1e-9)
+	require.InDelta(t, result.Y, 1*4+2*5+6, 1e-9)
+}
+
+func TestGetWeightedFunctionIndex(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	rnd := random.NewMockRandom(ctrl)
+
+	functions := []Function{
+		{Weight: 1},
+		{Weight: 2},
+		{Weight: 3},
+	}
+	totalWeight := 6.0
+
+	tests := []struct {
+		name     string
+		randVal  float64
+		expected int
+	}{
+		{"select f0", 0.0, 0},
+		{"select f0 upper bound", 0.999 / 6.0, 0},
+		{"select f1", 1.5 / 6.0, 1},
+		{"select f2", 4.5 / 6.0, 2},
+		{"select last explicitly", 5.999 / 6.0, 2},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rnd.EXPECT().Float64().Return(tt.randVal)
+
+			idx := getWeightedFunctionIndex(rnd, totalWeight, functions)
+			require.Equal(t, tt.expected, idx)
+		})
+	}
+}
+
+func TestGenerateFractal(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	t.Run("symmetry=2, creates 2 points", func(t *testing.T) {
+		mockRnd := random.NewMockRandom(ctrl)
+
+		args := &Args{
+			Functions: []Function{
+				{Name: Swirl, Weight: 1.0},
+			},
+			AffineParams: []AffineParam{
+				{A: 1, B: 0, C: 0, D: 1, E: 0, F: 0},
+			},
+			SymmetryLevel: 2,
+		}
+
+		rect := NewRectangle(-1, -1, 2, 2)
+		colors := []Color{{R: 255, G: 0, B: 0}}
+		image := NewFractalImage(10, 10)
+		totalFuncWeight := 1.0
+
+		// RandomPoint
+		mockRnd.EXPECT().Float64().Return(0.0).Times(2) // Точка (0,0)
+
+		// Аффинные параметры и выбор функции
+		mockRnd.EXPECT().Intn(1).Return(0).Times(Shift + IterPerPoint)
+		mockRnd.EXPECT().Float64().Return(0.0).Times(Shift + IterPerPoint)
+
+		image.GenerateFractal(rect, args, colors, totalFuncWeight, mockRnd, 1)
+
+		// Точка (0,0) при symmetry=2 даст (0,0) и поворот на 180° (0,0)
+		centerPixel, _ := image.GetPixel(5, 5) // Центр изображения
+		// При symmetry=2 hitCount должен быть минимум 2
+		require.GreaterOrEqual(t, centerPixel.HitCount, uint32(2))
+	})
 }

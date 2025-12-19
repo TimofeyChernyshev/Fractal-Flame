@@ -1,4 +1,4 @@
-package renderers
+package renderer
 
 import (
 	"log/slog"
@@ -64,7 +64,7 @@ func (r *Renderer) Render(args *domain.Args) *domain.FractalImage {
 
 			iterCount := endIter - startIter
 
-			renderIterations(r.rect, args, colors, totalFuncWeight, workerImage, localRnd, iterCount)
+			workerImage.GenerateFractal(r.rect, args, colors, totalFuncWeight, localRnd, iterCount)
 
 			results <- workerImage
 		}(i)

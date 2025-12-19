@@ -1,4 +1,4 @@
-package renderers
+package renderer
 
 import (
 	"math"
@@ -49,7 +49,7 @@ func TestRenderer_MultiThreadsRender(t *testing.T) {
 	mockRndThread1.EXPECT().Float64().Return(0.5).Times(2)
 	mockRndThread2.EXPECT().Float64().Return(0.5).Times(2)
 
-	const calls = shift + iterPerPoint
+	const calls = domain.Shift + domain.IterPerPoint
 	// affineIndex := rnd.Intn(len(args.AffineParams))
 	mockRndThread1.EXPECT().Intn(len(args.AffineParams)).Return(0).Times(calls)
 	mockRndThread2.EXPECT().Intn(len(args.AffineParams)).Return(0).Times(calls)
@@ -109,7 +109,7 @@ func TestRenderer_SingleThreadRender(t *testing.T) {
 	// point := r.rect.RandomPoint(rnd)
 	mockRnd.EXPECT().Float64().Return(0.5).Times(2) // X, Y
 
-	const calls = shift + iterPerPoint
+	const calls = domain.Shift + domain.IterPerPoint
 	// affineIndex := rnd.Intn(len(args.AffineParams))
 	mockRnd.EXPECT().Intn(len(args.AffineParams)).Return(0).Times(calls)
 	// getWeightedFunctionIndex(r.rnd, totalFuncWeight, args.Functions)
