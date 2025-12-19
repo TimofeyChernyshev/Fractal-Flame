@@ -22,7 +22,7 @@ func main() {
 	saver := saver.NewPngSaver()
 	renderer := renderers.NewRenderer(randomGen)
 
-	flameService := application.NewFlameService(saver, renderer)
+	flameService := usecase.NewFlameService(saver, renderer)
 
 	app := cli.NewApp(flameService)
 

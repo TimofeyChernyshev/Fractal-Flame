@@ -1,4 +1,4 @@
-package application
+package usecase
 
 import (
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
