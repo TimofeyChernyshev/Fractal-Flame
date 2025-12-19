@@ -22,8 +22,8 @@ func getWeightedFunctionIndex(rnd random.Random, totalWeight float64, functions 
 
 // mapPoint мапит точку в пиксель
 func mapPoint(point domain.Point, fi *domain.FractalImage, rect domain.Rectangle) (*domain.Pixel, bool) {
-	x := int((point.X - rect.X) / rect.Width * float64(fi.Width))
-	y := int((point.Y - rect.Y) / rect.Height * float64(fi.Height))
+	x := int((point.X - rect.XMin) / rect.Width * float64(fi.Width))
+	y := int((point.Y - rect.YMin) / rect.Height * float64(fi.Height))
 
 	return fi.GetPixel(x, y)
 }

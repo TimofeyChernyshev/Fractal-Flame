@@ -8,8 +8,8 @@ import (
 
 func TestRectangleContains(t *testing.T) {
 	r := Rectangle{
-		X:      -1,
-		Y:      -2,
+		XMin:   -1,
+		YMin:   -2,
 		Width:  1,
 		Height: 2,
 	}
