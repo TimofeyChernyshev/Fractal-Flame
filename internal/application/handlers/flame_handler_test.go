@@ -1,4 +1,4 @@
-package usecase
+package handlers
 
 import (
 	"fmt"
@@ -9,27 +9,27 @@ import (
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
 )
 
-type serviceSuite struct {
+type handleFlameSuite struct {
 	suite.Suite
 	saver    *MockSaver
 	renderer *MockRenderer
 	ctrl     *gomock.Controller
 
-	service *FlameService
+	handler *FlameHandler
 	args    *domain.Args
 	image   *domain.FractalImage
 }
 
 func TestRunAppSuite(t *testing.T) {
-	suite.Run(t, new(serviceSuite))
+	suite.Run(t, new(handleFlameSuite))
 }
 
-func (s *serviceSuite) SetupSuite() {
+func (s *handleFlameSuite) SetupSuite() {
 	s.ctrl = gomock.NewController(s.T())
 	s.saver = NewMockSaver(s.ctrl)
 	s.renderer = NewMockRenderer(s.ctrl)
 
-	s.service = NewFlameService(s.saver, s.renderer)
+	s.handler = NewFlameHandler(s.saver, s.renderer)
 
 	s.args = &domain.Args{
 		Size:           domain.Size{Height: 999, Width: 999},
@@ -47,26 +47,28 @@ func (s *serviceSuite) SetupSuite() {
 	s.image = domain.NewFractalImage(999, 999)
 }
 
-func (s *serviceSuite) TearDownSuite() {
+func (s *handleFlameSuite) TearDownSuite() {
 	s.ctrl.Finish()
 }
 
-func (s *serviceSuite) TestParseArgs() {
-	s.Run("No errors", func() {
+func (s *handleFlameSuite) TestNoError() {
+	s.Run("No error", func() {
 		s.renderer.EXPECT().Render(s.args).Return(s.image)
-		s.saver.EXPECT().Save(s.image, "cfg.png").Return(nil)
+		img := fractalToImage(s.image)
+		s.saver.EXPECT().Save(img, "cfg.png").Return(nil)
 
-		err := s.service.RenderFlame(s.args)
+		err := s.handler.RenderFlame(s.args)
 		s.Require().NoError(err)
 	})
 }
 
-func (s *serviceSuite) TestSaverReturnErr() {
+func (s *handleFlameSuite) TestSaverReturnErr() {
 	s.Run("saver return error", func() {
 		s.renderer.EXPECT().Render(s.args).Return(s.image)
-		s.saver.EXPECT().Save(s.image, "cfg.png").Return(fmt.Errorf("some error"))
+		img := fractalToImage(s.image)
+		s.saver.EXPECT().Save(img, "cfg.png").Return(fmt.Errorf("some error"))
 
-		err := s.service.RenderFlame(s.args)
+		err := s.handler.RenderFlame(s.args)
 		s.Require().Error(err)
 	})
 }

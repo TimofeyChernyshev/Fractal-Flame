@@ -1,4 +1,4 @@
-package renderer
+package usecase
 
 import (
 	"log/slog"
@@ -18,7 +18,7 @@ type Renderer struct {
 	rndGen RandomGenerator
 }
 
-// NewMultiThreadRenderer возвращает новый многопоточный рендерер
+// NewRenderer возвращает новый рендерер
 func NewRenderer(rnd RandomGenerator) *Renderer {
 	return &Renderer{
 		rect:   domain.NewRectangle(minX, minY, maxX-minX, maxY-minY),

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"syscall"
 
-	renderer "gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/application/flame_renderer"
 	usecase "gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/application/flame_usecase"
+	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/application/handlers"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/cli"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/random_generator"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/saver"
@@ -23,9 +23,9 @@ func main() {
 	slog.SetDefault(logger)
 
 	saver := saver.NewPngSaver()
-	renderer := renderer.NewRenderer(randomGen)
+	flameUsecase := usecase.NewRenderer(randomGen)
 
-	flameService := usecase.NewFlameService(saver, renderer)
+	flameService := handlers.NewFlameHandler(saver, flameUsecase)
 
 	app := cli.NewApp(flameService)
 

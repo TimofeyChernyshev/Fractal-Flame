@@ -1,4 +1,4 @@
-package renderer
+package usecase
 
 const (
 	minX = -1.0

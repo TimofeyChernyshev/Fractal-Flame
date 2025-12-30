@@ -1,4 +1,4 @@
-package usecase
+package handlers
 
 import (
 	"image"
@@ -8,19 +8,19 @@ import (
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
 )
 
-// FlameService представляет основной сервис приложения
-type FlameService struct {
+// FlameHandler представляет хендлер рендеринга изображений
+type FlameHandler struct {
 	saver    Saver
 	renderer Renderer
 }
 
 // NewFlameService возвращает новый экземпляр FlameService
-func NewFlameService(s Saver, r Renderer) *FlameService {
-	return &FlameService{saver: s, renderer: r}
+func NewFlameHandler(s Saver, r Renderer) *FlameHandler {
+	return &FlameHandler{saver: s, renderer: r}
 }
 
 // RenderFlame создает и сохраняет фрактальное пламя
-func (s *FlameService) RenderFlame(args *domain.Args) error {
+func (s *FlameHandler) RenderFlame(args *domain.Args) error {
 	fractal := s.renderer.Render(args)
 	slog.Debug("Image rendered")
 
