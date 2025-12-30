@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	renderer "gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/application/flame_renderer"
@@ -42,20 +43,36 @@ func main() {
 }
 
 func NewLogger() *slog.Logger {
-	env := os.Getenv("APP_ENV")
+	logLevel := os.Getenv("LOG_LEVEL")
+	logFormat := os.Getenv("LOG_FORMAT")
 
-	switch env {
-	case "prod":
-		return slog.New(
-			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-				Level: slog.LevelInfo,
-			}),
-		)
+	var level slog.Level
+
+	switch strings.ToLower(logLevel) {
+	case "debug":
+		level = slog.LevelDebug
+	case "warn", "warning":
+		level = slog.LevelWarn
+	case "error":
+		level = slog.LevelError
 	default:
-		return slog.New(
-			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-				Level: slog.LevelDebug,
-			}),
-		)
+		level = slog.LevelInfo
 	}
+
+	opts := &slog.HandlerOptions{
+		Level: level,
+	}
+
+	var handler slog.Handler
+
+	switch logFormat {
+	case "json":
+		handler = slog.NewJSONHandler(os.Stdout, opts)
+	default:
+		handler = slog.NewTextHandler(os.Stdout, opts)
+	}
+
+	logger := slog.New(handler)
+
+	return logger
 }
