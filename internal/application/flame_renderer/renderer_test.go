@@ -1,12 +1,18 @@
 package renderer
 
 import (
+	"bytes"
+	"image"
+	"image/color"
+	"image/png"
 	"math"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/sebdah/goldie/v2"
 	"github.com/stretchr/testify/require"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/domain"
+	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/infrastructure/random_generator"
 	"gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/pkg/random"
 )
 
@@ -132,4 +138,46 @@ func TestRenderer_SingleThreadRender(t *testing.T) {
 	}
 
 	require.NotZero(t, coloredPixels)
+}
+
+func TestRenderer_GoldenImage(t *testing.T) {
+	rndGen := random_generator.NewGenerator()
+	r := NewRenderer(rndGen)
+
+	frac := r.Render(&domain.Args{
+		Size:           domain.Size{Width: 100, Height: 100},
+		IterationCount: 10_000,
+		Seed:           42.0,
+		Threads:        1,
+		Functions: []domain.Function{
+			{Name: domain.Transformation("swirl"), Weight: 1.0},
+		},
+		AffineParams: []domain.AffineParam{
+			{A: 1, B: 0, C: 0, D: 1, E: 0, F: 0},
+		},
+		SymmetryLevel: 1,
+	})
+
+	img := image.NewRGBA(image.Rect(0, 0, frac.Width, frac.Height))
+
+	for y := range frac.Height {
+		for x := range frac.Width {
+			pixel, _ := frac.GetPixel(x, y)
+			pixelColor := color.RGBA{
+				R: uint8(pixel.Color.R),
+				G: uint8(pixel.Color.G),
+				B: uint8(pixel.Color.B),
+				A: 255,
+			}
+
+			img.Set(x, y, pixelColor)
+		}
+	}
+
+	buf := new(bytes.Buffer)
+	err := png.Encode(buf, img)
+	require.NoError(t, err)
+
+	g := goldie.New(t)
+	g.Assert(t, t.Name(), buf.Bytes())
 }
