@@ -5,6 +5,8 @@ import (
 	"log"
 	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
 
 	renderer "gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/application/flame_renderer"
 	usecase "gitlab.education.tbank.ru/backend-academy-go-2025/homeworks/hw4-fractal-flame/internal/application/flame_usecase"
@@ -26,7 +28,14 @@ func main() {
 
 	app := cli.NewApp(flameService)
 
-	err := app.Run(context.Background(), os.Args)
+	ctx, stop := signal.NotifyContext(
+		context.Background(),
+		os.Interrupt,
+		syscall.SIGTERM,
+	)
+	defer stop()
+
+	err := app.Run(ctx, os.Args)
 	if err != nil {
 		log.Println(err)
 	}
