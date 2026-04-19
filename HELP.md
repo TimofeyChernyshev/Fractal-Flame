@@ -86,12 +86,3 @@ go get -u
 ```shell
 go mod tidy
 ```
-
-
-## Дополнительные материалы
-
-- Документация по Go: https://golang.org/doc/
-- Эффективный Go: https://golang.org/doc/effective_go
-- Go модули: https://github.com/golang/go/wiki/Modules
-- Документация по процессу автоматизированной сборки в среде Gitlab: https://docs.gitlab.com/ci/
-- Go by Example: https://gobyexample.com/
